@@ -2,6 +2,13 @@
 
 surf::surf()
 {
+    scaleX = 1;
+    scaleY = 1;
+    xMin = -1;
+    xMax = 1;
+    yMin = -1;
+    yMax = 1;
+
     this->surfData.Initialize(100, 100);
 }
 
@@ -9,9 +16,32 @@ surf::~surf()
 {
 }
 
-double &surf::operator()(int i, int j)
+void surf::init()
 {
-    return this->surfData(i, j);
+    MkDouble mean(2);
+    MkMatrix<double> covar(2, 2);
+
+    mean(0) = 0.0;
+    mean(1) = 0.0;
+
+    covar(0, 0) = 1.0;
+    covar(0, 1) = 0.0;
+    covar(1, 0) = 0.0;
+    covar(1, 1) = 1.0;
+
+    this->gaussDist.init(mean, covar);
+}
+
+void surf::bang(double cx, double cy)
+{
+    for (int i = 0; i < 100; i++)
+        for (int j = 0; j < 100; j++)
+        {
+            double x = (double)i / 100.0 * (this->xMax - this->xMin) + this->xMin;
+            double y = (double)j / 100.0 * (this->yMax - this->yMin) + this->yMin;
+            double z = this->gaussDist.eval(x - cx, y - cy);
+            this->surfData(i, j) += z;
+        }
 }
 
 void surf::log()
@@ -22,12 +52,37 @@ void surf::log()
     return;
 }
 
-void surf::fillup()
+void surf::out()
 {
-    for (int i = 0; i < 100; i++)
-        for (int j = 0; j < 100; j++)
-            this->surfData(i, j) = rand() % 100;
+
+    for (int j = 0; j < 100; j++)
+    {
+        std::cout << std::setw(3) << j << " ";
+        for (int i = 0; i < 100; i++)
+        {
+            std::cout << std::format("{:3.1} ", std::round(10 * this->surfData(i, j)) / 10.0);
+        }
+        std::cout << std::endl;
+    }
+
     return;
+}
+
+double &surf::operator()(int i, int j)
+{
+    return this->surfData(i, j);
+}
+
+double &surf::operator()(float x, float y)
+{
+    static double nil = 0;
+    nil = 0;
+    int i = (int)((x - this->xMin) / (this->xMax - this->xMin) * 100);
+    int j = (int)((y - this->yMin) / (this->yMax - this->yMin) * 100);
+    if (0 <= i && i < 100 && 0 <= j && j < 100)
+        return this->surfData(i, j);
+    else
+        return nil; // out of range, return nil value to invalidate the updating of mesh
 }
 
 void surf::test()

@@ -22,31 +22,45 @@ int main(void)
     MkDouble mean(2);
     MkMatrix<double> covar(2, 2);
 
-    mean(0) = 0.3;
-    mean(1) = 0.3;
+    mean(0) = 0.0;
+    mean(1) = 0.0;
 
-    covar(0, 0) = 0.1;
+    covar(0, 0) = 0.2;
     covar(0, 1) = 0.0;
     covar(1, 0) = 0.0;
     covar(1, 1) = 0.1;
 
     gauss gaussDist;
     gaussDist.init(mean, covar);
-    // gaussDist.test();
-    double val;
-    for (int i = -10; i <= 10; i++)
-    {
-        for (int j = -10; j <= 10; j++)
-        {
-            val = gaussDist.eval(i / 10.0, j / 10.0);
-            std::printf("evaluation (%f,%f) is %f\n", i / 10.0, j / 10.0, val);
-        }
-    }
+
+    // double val;
+    // for (int i = -10; i <= 10; i++)
+    // {
+    //     for (int j = -10; j <= 10; j++)
+    //     {
+    //         val = gaussDist.eval(i / 10.0, j / 10.0);
+    //         std::printf("evaluation (%f,%f) is %f\n", i / 10.0, j / 10.0, val);
+    //     }
+    // }
 
     surf surfData;
+    surfData.init(mean, covar);
+    surfData.setRange(-5.0, 5.0, -5.0, 5.0);
 
-    surfData.fillup();
-    surfData.test();
+    covar(0, 0) = 0.2;
+    covar(0, 1) = 0.0;
+    covar(1, 0) = 0.0;
+    covar(1, 1) = 0.1;
+    surfData.setGauss(mean, covar);
+    surfData.bang(0.0, 0.0);
+
+    covar(0, 0) = 0.1;
+    covar(0, 1) = 0.0;
+    covar(1, 0) = 0.0;
+    covar(1, 1) = 0.2;
+    surfData.setGauss(mean, covar);
+    surfData.bang(3.0, 3.0);
+    surfData.out();
 
     mesh rs;
     rs(1, 1) = 1;
