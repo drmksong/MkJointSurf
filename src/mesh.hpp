@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <MkPoint.hpp>
+#include "surf.hpp"
 
 class point
 {
@@ -23,7 +24,7 @@ public:
     mesh(MkPoints &vertices);
     ~mesh();
 
-    bool update(MkArray<double> &surfData);
+    bool update(surf &surfData);
     void log();
     void draw();
     double &operator()(int i, int j);

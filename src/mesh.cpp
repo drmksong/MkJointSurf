@@ -35,7 +35,7 @@ void mesh::setupMesh()
     }
 }
 
-bool mesh::update(MkArray<double> &surfData)
+bool mesh::update(surf &surfData)
 {
 
     return true;
