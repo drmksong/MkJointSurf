@@ -19,6 +19,7 @@ void gauss::init()
     Covar(0, 1) = 0.0;
     Covar(1, 0) = 0.0;
     Covar(1, 1) = 1.0;
+    maxVal = eval(Mean[0], Mean[1]);
 }
 
 void gauss::init(MkDouble &Mean, MkMatrix<double> &Covar)
@@ -31,6 +32,7 @@ void gauss::init(MkDouble &Mean, MkMatrix<double> &Covar)
 
     this->Mean = Mean;
     this->Covar = Covar;
+    maxVal = eval(Mean[0], Mean[1]);
 }
 
 void gauss::setMean(MkDouble &Mean)
@@ -41,6 +43,7 @@ void gauss::setMean(MkDouble &Mean)
     assert(Mean.getSzZ() == 1);
 
     this->Mean = Mean;
+    maxVal = eval(Mean[0], Mean[1]);
 }
 
 void gauss::setCovar(MkMatrix<double> &Covar)
@@ -50,6 +53,7 @@ void gauss::setCovar(MkMatrix<double> &Covar)
     assert(this->Mean.getSzX() == Covar.GetFI());
 
     this->Covar = Covar;
+    maxVal = eval(Mean[0], Mean[1]);
 }
 
 double gauss::eval(double x, double y)

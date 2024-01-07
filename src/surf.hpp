@@ -32,7 +32,18 @@ public:
         this->yMax = yMax;
     }
 
+    void setScale(float scale)
+    {
+        this->scale = scale;
+    }
+
+    MkDouble &getSurfData()
+    {
+        return this->surfData;
+    }
+
     void bang(double cx, double cy);
+    void rbang(double cx, double cy);
 
     void log();
     void out();
@@ -44,5 +55,5 @@ private:
     MkDouble surfData;
     gauss gaussDist;
     float xMin, xMax, yMin, yMax;
-    float scaleX, scaleY;
+    float scale;
 };

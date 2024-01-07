@@ -2,8 +2,7 @@
 
 surf::surf()
 {
-    scaleX = 1;
-    scaleY = 1;
+    scale = 1;
     xMin = -1;
     xMax = 1;
     yMin = -1;
@@ -34,13 +33,33 @@ void surf::init()
 
 void surf::bang(double cx, double cy)
 {
+    float dev = std::max(this->gaussDist.getCovar()(0, 0), this->gaussDist.getCovar()(1, 1));
     for (int i = 0; i < 100; i++)
         for (int j = 0; j < 100; j++)
         {
             double x = (double)i / 100.0 * (this->xMax - this->xMin) + this->xMin;
             double y = (double)j / 100.0 * (this->yMax - this->yMin) + this->yMin;
-            double z = this->gaussDist.eval(x - cx, y - cy);
+            float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
+            if (dis > 3 * dev)
+                continue;
+            double z = this->scale * this->gaussDist.eval(x - cx, y - cy);
             this->surfData(i, j) += z;
+        }
+}
+
+void surf::rbang(double cx, double cy)
+{
+    float dev = std::max(this->gaussDist.getCovar()(0, 0), this->gaussDist.getCovar()(1, 1));
+    for (int i = 0; i < 100; i++)
+        for (int j = 0; j < 100; j++)
+        {
+            double x = (double)i / 100.0 * (this->xMax - this->xMin) + this->xMin;
+            double y = (double)j / 100.0 * (this->yMax - this->yMin) + this->yMin;
+            float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
+            if (dis > 3 * dev)
+                continue;
+            double z = this->scale * this->gaussDist.eval(x - cx, y - cy);
+            this->surfData(i, j) -= z;
         }
 }
 
@@ -60,7 +79,7 @@ void surf::out()
         std::cout << std::setw(3) << j << " ";
         for (int i = 0; i < 100; i++)
         {
-            std::cout << std::format("{:3.1} ", std::round(10 * this->surfData(i, j)) / 10.0);
+            std::cout << std::format("{:4.1}", std::round(10 * this->surfData(i, j)) / 10.0);
         }
         std::cout << std::endl;
     }
