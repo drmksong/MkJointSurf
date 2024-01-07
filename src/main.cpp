@@ -207,11 +207,11 @@ static Mesh genmesh(surf &surf)
     {
         for (int j = 0; j < surf.getSurfData().getSzY(); j++)
         {
-            mesh.vertices[vCounter] = (float)i / 10.0f;
-            mesh.vertices[vCounter + 1] = (float)j / 10.0f;
-            mesh.vertices[vCounter + 2] = 0; //(float)surf(i, j) / 100.0f;
-            if (i == 0)
-                std::cout << std::format("{:3},{:3} : ({:3}({:3}), {:3}({:3}), {:3}({:3}) )", i, j, mesh.vertices[vCounter], vCounter, mesh.vertices[vCounter + 1], vCounter + 1, mesh.vertices[vCounter + 2], vCounter + 2) << std::endl;
+            mesh.vertices[vCounter] = (float)(i - 50) / 10.0f;
+            mesh.vertices[vCounter + 1] = (float)(j - 50) / 10.0f;
+            mesh.vertices[vCounter + 2] = 1; //(float)surf(i, j) / 100.0f;
+            if (j == 0)
+                std::cout << std::format("i{:3},j{:3} : ({:3}({:3}), {:3}({:3}), {:3}({:3}) )", i, j, mesh.vertices[vCounter], vCounter, mesh.vertices[vCounter + 1], vCounter + 1, mesh.vertices[vCounter + 2], vCounter + 2) << std::endl;
             vCounter += 3;
 
             mesh.texcoords[tcCounter] = (float)i / 100.0f;
@@ -223,9 +223,9 @@ static Mesh genmesh(surf &surf)
             mesh.normals[nCounter + 2] = 1.0f;
             nCounter += 3;
 
-            mesh.colors[cCounter] = 254;
+            mesh.colors[cCounter] = (float)i / 100.0f * 255;
             mesh.colors[cCounter + 1] = 254;
-            mesh.colors[cCounter + 2] = 254;
+            mesh.colors[cCounter + 2] = (float)(j) / 100.0f * 255;
             mesh.colors[cCounter + 3] = 254;
             cCounter += 4;
         }
@@ -238,13 +238,13 @@ static Mesh genmesh(surf &surf)
             mesh.indices[iCounter] = (i)*surf.getSurfData().getSzY() + (j);
             mesh.indices[iCounter + 1] = (i + 1) * surf.getSurfData().getSzY() + (j + 1);
             mesh.indices[iCounter + 2] = (i)*surf.getSurfData().getSzY() + (j + 1);
-            if (i == 0)
-                std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter], mesh.indices[iCounter + 1], mesh.indices[iCounter + 2]) << std::endl;
+            // if (i == 0)
+            //     std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter], mesh.indices[iCounter + 1], mesh.indices[iCounter + 2]) << std::endl;
             mesh.indices[iCounter + 3] = (i)*surf.getSurfData().getSzY() + (j);
             mesh.indices[iCounter + 4] = (i + 1) * surf.getSurfData().getSzY() + (j);
             mesh.indices[iCounter + 5] = (i + 1) * surf.getSurfData().getSzY() + (j + 1);
-            if (i == 0)
-                std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter + 3], mesh.indices[iCounter + 4], mesh.indices[iCounter + 5]) << std::endl;
+            // if (i == 0)
+            //     std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter + 3], mesh.indices[iCounter + 4], mesh.indices[iCounter + 5]) << std::endl;
         }
         iCounter += 6;
     }
@@ -409,11 +409,11 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "Rock Surface");
 
     Camera3D camera = {0};
-    camera.position = (Vector3){-10.0f, -10.0f, 5.0f}; // Camera position
-    camera.target = (Vector3){0.0f, 0.0f, 0.0f};       // Camera looking at point
-    camera.up = (Vector3){0.0f, 0.0f, 1.0f};           // Camera up vector (rotation towards target)
-    camera.fovy = 90.0f;                               // Camera field-of-view Y
-    camera.projection = CAMERA_PERSPECTIVE;            // Camera projection type
+    camera.position = (Vector3){0.0f, -10.0f, 0.0f}; // Camera position
+    camera.target = (Vector3){0.0f, 0.0f, 0.0f};     // Camera looking at point
+    camera.up = (Vector3){0.0f, 0.0f, 1.0f};         // Camera up vector (rotation towards target)
+    camera.fovy = 90.0f;                             // Camera field-of-view Y
+    camera.projection = CAMERA_PERSPECTIVE;          // Camera projection type
     Vector3 targetPosition = {0.0f, 0.0f, -0.5f};
 
     Mesh mesh, mesh2;
@@ -445,39 +445,40 @@ int main(void)
 
         DrawMesh(mesh, material, trans);  // ***
         DrawMesh(mesh2, material, trans); // ***
-        // for (int i = 0; i < surfData.getSurfData().getSzX() - 1; i++)
-        // {
-        //     for (int j = 0; j < surfData.getSurfData().getSzY() - 1; j++)
-        //     {
-        //         // std::cout << std::format("({:3}, {:3} )", screenWidth * float(i) / 100.0f, screenWidth * float(i + 1) / 100.0f) << std::endl;
-        //         // DrawTriangle3D((Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j) / 100.0f, (float)surfData(i, j)},
-        //         //                (Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surfData(i, j + 1)},
-        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j) / 100.0f, (float)surfData(i + 1, j)}, WHITE);
-        //         // DrawTriangle3D((Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surfData(i, j + 1)},
-        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surfData(i + 1, j + 1)},
-        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j) / 100.0f, (float)surfData(i + 1, j)}, YELLOW);
-        //         DrawTriangle3D((Vector3){float(i) / 10.0f-5.0f,     float(j) / 10.0f-5.0f,      0.01f*(float)surfData(i, j)},
-        //                        (Vector3){float(i + 1) / 10.0f-5.0f, float(j) / 10.0f-5.0f,      0.01f*(float)surfData(i + 1, j)},
-        //                        (Vector3){float(i) / 10.0f-5.0f,     float(j + 1) / 10.0f-5.0f,  0.01f*(float)surfData(i, j + 1)}, YELLOW);
-        //         DrawTriangle3D((Vector3){float(i + 1) / 10.0f-5.0f, float(j) / 10.0f-5.0f,      0.01f*(float)surfData(i + 1, j)},
-        //                        (Vector3){float(i + 1) / 10.0f-5.0f, float(j + 1) / 10.0f-5.0f,  0.01f*(float)surfData(i + 1, j + 1)},
-        //                        (Vector3){float(i) / 10.0f-5.0f,     float(j + 1) / 10.0f-5.0f,  0.01f*(float)surfData(i, j + 1)}, YELLOW);
-        //         DrawLine3D((Vector3){float(i) / 10.0f-5.0f,         float(j) / 10.0f-5.0f,      0.01f*(float)surfData(i, j)},
-        //                        (Vector3){float(i+1) / 10.0f-5.0f,   float(j) / 10.0f-5.0f,      0.01f*(float)surfData(i + 1, j)}, BLACK);
-        //         DrawLine3D((Vector3){float(i + 1) / 10.0f-5.0f,     float(j) / 10.0f-5.0f,      0.01f*(float)surfData(i + 1, j)},
-        //                        (Vector3){float(i) / 10.0f-5.0f,     float(j + 1) / 10.0f-5.0f,  0.01f*(float)surfData(i, j + 1)}, BLACK);
-        //         DrawLine3D((Vector3){float(i) / 10.0f-5.0f,         float(j + 1) / 10.0f-5.0f,  0.01f*(float)surfData(i, j + 1)},
-        //                        (Vector3){float(i) / 10.0f-5.0f,     float(j) / 10.0f-5.0f,      0.01f*(float)surfData(i, j)},BLACK);
-        //         DrawLine3D((Vector3){float(i + 1) / 10.0f-5.0f,     float(j) / 10.0f-5.0f,      0.01f*(float)surfData(i + 1, j)},
-        //                        (Vector3){float(i + 1) / 10.0f-5.0f, float(j + 1) / 10.0f-5.0f,  0.01f*(float)surfData(i + 1, j + 1)}, BLACK);
-        //         DrawLine3D((Vector3){float(i + 1) / 10.0f-5.0f,     float(j + 1) / 10.0f-5.0f,  0.01f*(float)surfData(i + 1, j + 1)},
-        //                        (Vector3){float(i) / 10.0f-5.0f,     float(j + 1) / 10.0f-5.0f,  0.01f*(float)surfData(i, j + 1)}, BLACK);
-        //         DrawLine3D((Vector3){float(i) / 10.0f-5.0f,         float(j + 1) / 10.0f-5.0f,  0.01f*(float)surfData(i, j + 1)},
-        //                        (Vector3){float(i + 1) / 10.0f-5.0f, float(j) / 10.0f-5.0f,      0.01f*(float)surfData(i + 1, j)},BLACK);
 
-        //     }
-        //     // std::cout << std::endl;
-        // }
+        for (int i = 0; i < surfData.getSurfData().getSzX() - 1; i++)
+        {
+            for (int j = 0; j < surfData.getSurfData().getSzY() - 1; j++)
+            {
+                // std::cout << std::format("({:3}, {:3} )", screenWidth * float(i) / 100.0f, screenWidth * float(i + 1) / 100.0f) << std::endl;
+                // DrawTriangle3D((Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j) / 100.0f, (float)surfData(i, j)},
+                //                (Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surfData(i, j + 1)},
+                //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j) / 100.0f, (float)surfData(i + 1, j)}, WHITE);
+                // DrawTriangle3D((Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surfData(i, j + 1)},
+                //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surfData(i + 1, j + 1)},
+                //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j) / 100.0f, (float)surfData(i + 1, j)}, YELLOW);
+                DrawTriangle3D((Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j)},
+                               (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)},
+                               (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)}, YELLOW);
+                DrawTriangle3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)},
+                               (Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j + 1)},
+                               (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)}, YELLOW);
+                DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j)},
+                           (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)}, BLACK);
+                DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)},
+                           (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)}, BLACK);
+                DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)},
+                           (Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j)}, BLACK);
+                DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)},
+                           (Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j + 1)}, BLACK);
+                DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j + 1)},
+                           (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)}, BLACK);
+                DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)},
+                           (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)}, BLACK);
+            }
+            // std::cout << std::endl;
+        }
+
         DrawCube(targetPosition, 2.0f, 2.0f, -0.5f, RED);
         DrawCubeWires(targetPosition, 2.0f, 2.0f, -0.5f, MAROON);
         DrawGrid(5, 2.0f);
