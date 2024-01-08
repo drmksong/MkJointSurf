@@ -3,25 +3,22 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <cmath>
+#include <raylib.h>
 #include <MkPoint.hpp>
 #include "surf.hpp"
 
-class point
-{
-public:
-    double x, y, z;
-    point(double x, double y, double z) : x(x), y(y), z(z) {}
-};
 
 class mesh
 {
 private:
-    MkPoints vertices;
+    surf surfData;
+    Mesh meshData;
     void setupMesh();
 
 public:
     mesh();
-    mesh(MkPoints &vertices);
+    mesh(surf &surfData);
     ~mesh();
 
     bool update(surf &surfData);

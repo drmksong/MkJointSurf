@@ -42,7 +42,7 @@ void surf::bang(double cx, double cy)
             float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
             if (dis > 3 * dev)
                 continue;
-            double z = this->scale * this->gaussDist.eval(x - cx, y - cy);
+            double z = this->scale * this->gaussDist.seval(x - cx, y - cy);
             this->surfData(i, j) += z;
         }
 }
@@ -58,7 +58,7 @@ void surf::rbang(double cx, double cy)
             float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
             if (dis > 3 * dev)
                 continue;
-            double z = this->scale * this->gaussDist.eval(x - cx, y - cy);
+            double z = this->scale * this->gaussDist.seval(x - cx, y - cy);
             this->surfData(i, j) -= z;
         }
 }
