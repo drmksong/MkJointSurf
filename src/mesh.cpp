@@ -2,7 +2,6 @@
 
 mesh::mesh()
 {
-    this->surfData = NULL;
 }
 
 mesh::mesh(surf &surfData)
@@ -17,9 +16,10 @@ mesh::~mesh()
 
 void mesh::setupMesh()
 {
-    if(this-surfData == NULL) {
+    if (this -> surfData.getSurfData().getSzX() == 0 || this -> surfData.getSurfData().getSzY() == 0)
+    {
         std::cout << "surfData is NULL" << std::endl;
-        return; 
+        return;
     }
 
     surf &surf_ = this->surfData;
@@ -122,7 +122,6 @@ void mesh::setupMesh()
     // }
 
     UploadMesh(&meshData, false);
-
 }
 
 bool mesh::update(surf &surfData)
@@ -139,7 +138,7 @@ void mesh::draw()
     return;
 }
 
-double & mesh::operator()(int i, int j)
+double &mesh::operator()(int i, int j)
 {
     return this->surfData(i, j);
 }

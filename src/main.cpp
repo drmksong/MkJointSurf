@@ -373,7 +373,7 @@ int main(void)
     std::random_device rd;
     std::mt19937 gen(rd());
     std::normal_distribution<double> nd(0, 1);
-    std::normal_distribution<double> nd_05(0, 0.05);
+    std::normal_distribution<double> nd_05(0, 0.01);
     std::normal_distribution<double> nd1(0, 0.1);
     std::normal_distribution<double> nd2(0, 0.2);
     std::normal_distribution<double> nd3(0, 0.3);
@@ -399,7 +399,6 @@ int main(void)
     //               << std::string(p.second / 100, '*') << " " << p.second << '\n';
     // }
     // test code block ends
-
     for (int cnt = 0; cnt < 10000 / scale; cnt++)
     {
         // std::cout << std::format("nd_cov(gen) = {:2}", std::abs(nd_cov(gen))) << std::endl;
@@ -410,9 +409,9 @@ int main(void)
             // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
             std::cout << std::format("\rcnt = {:5}%:", cnt / 100) << std::string(cnt / 100, '.') << std::flush;
 
-        covar(1, 1) = covar(0, 0) = std::max(std::abs(nd9(gen)), 0.01);
-        covar(1, 1) = 11 * covar(0, 0);
-        // covar(1, 1) = std::max(std::abs(nd9(gen)), 0.01);
+        covar(1, 1) = covar(0, 0) = std::max(std::abs(nd1(gen)), 0.01);
+        covar(1, 1) = 1 * covar(0, 0);
+        // covar(1, 1) = std::max(std::abs(nd1(gen)), 0.01);
         surfData.setGauss(mean, covar);
         if (nd(gen) > 0)
             surfData.bang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
@@ -420,7 +419,7 @@ int main(void)
             surfData.rbang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
     }
 
-    for (int cnt = 0; cnt < 10000 / scale; cnt++)
+    for (int cnt = 0; cnt < 1000 / scale; cnt++)
     {
         // std::cout << std::format("nd_cov(gen) = {:2}", std::abs(nd_cov(gen))) << std::endl;
         // std::cout << std::format("nd_bx(gen) = {:2}", nd_bx(gen)-5) << std::endl;
@@ -428,17 +427,18 @@ int main(void)
 
         if (cnt % 100 == 0)
             // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
-            std::cout << std::format("\rcnt = {:5}%:", cnt / 100) << std::string(cnt / 100, '.') << std::flush;
+            std::cout << std::format("\rcnt = {:5}%:", cnt / 10) << std::string(cnt / 10, '.') << std::flush;
 
-        covar(1, 1) = covar(0, 0) = std::max(std::abs(nd9(gen)), 0.01);
-        covar(1, 1) = 11 * covar(0, 0);
-        // covar(1, 1) = std::max(std::abs(nd9(gen)), 0.01);
+        covar(1, 1) = covar(0, 0) = std::max(std::abs(nd1(gen)), 0.01);
+        covar(1, 1) = 20 * covar(0, 0);
+        // covar(1, 1) = std::max(std::abs(nd5(gen)), 0.01);
         surfData.setGauss(mean, covar);
         if (nd(gen) > 0)
             surfData.bang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
         else
             surfData.rbang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
     }
+
     std::cout << std::endl;
 
     // for (int cnt = 0; cnt < 100 / scale; cnt++)
