@@ -4,9 +4,10 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <MkArray.hpp>
-#include "mesh.hpp"
-#include "surf.hpp"
-#include "gauss.hpp"
+#include "MkMesh.hpp"
+#include "MkSurf.hpp"
+#include "MkGauss.hpp"
+#include "MkNormGen.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #define GLSL_VERSION            330
@@ -14,4 +15,4 @@
 #define GLSL_VERSION            100
 #endif
 
-Mesh gen_mesh(surf &surf);
+Mesh gen_mesh(MkSurf &surf);

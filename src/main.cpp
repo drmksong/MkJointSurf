@@ -4,16 +4,6 @@
 // This is a simple raylib program that draws a hopefully realistic joint surfaces
 // of a rock surface. The program is written in C++ and uses raylib as a library.
 
-void fillup(MkDouble &surfData)
-{
-    for (int i = 0; i < surfData.getSzX(); i++)
-    {
-        for (int j = 0; j < surfData.getSzY(); j++)
-        {
-            surfData(i, j) = i + j;
-        }
-    }
-}
 
 // Mesh, vertex data and vao/vbo
 // typedef struct Mesh {
@@ -77,6 +67,7 @@ void fillup(MkDouble &surfData)
 // } Texture;
 
 // Generate a simple triangle mesh from code
+
 static Mesh genMeshTest(void)
 {
     Mesh mesh = {0};
@@ -204,12 +195,13 @@ static Mesh genMeshTest(void)
 
     return mesh;
 }
-static Mesh genmesh(surf &surf)
+
+static Mesh genmesh(MkSurf &surf)
 {
     Mesh mesh = {0};
 
-    mesh.vertexCount = surf.getSurfData().getSzX() * surf.getSurfData().getSzY();
-    mesh.triangleCount = (surf.getSurfData().getSzX() - 1) * (surf.getSurfData().getSzY() - 1) * 2;
+    mesh.vertexCount = surf.GetSurfData().getSzX() * surf.GetSurfData().getSzY();
+    mesh.triangleCount = (surf.GetSurfData().getSzX() - 1) * (surf.GetSurfData().getSzY() - 1) * 2;
 
     mesh.vertices = (float *)MemAlloc(mesh.vertexCount * 3 * sizeof(float));
     mesh.texcoords = (float *)MemAlloc(mesh.vertexCount * 2 * sizeof(float));
@@ -223,8 +215,8 @@ static Mesh genmesh(surf &surf)
     int cCounter = 0;
     int iCounter = 0;
 
-    int szX = surf.getSurfData().getSzX();
-    int szY = surf.getSurfData().getSzY();
+    int szX = surf.GetSurfData().getSzX();
+    int szY = surf.GetSurfData().getSzY();
     double maxValue = -1e10, minValue = 1e10;
 
     for (int j = 0; j < szY; j++)
@@ -236,10 +228,10 @@ static Mesh genmesh(surf &surf)
         }
     }
 
-    for (int j = 0; j < surf.getSurfData().getSzY(); j++)
+    for (int j = 0; j < surf.GetSurfData().getSzY(); j++)
     // for (int j = 0; j < 3; j++)
     {
-        for (int i = 0; i < surf.getSurfData().getSzX(); i++)
+        for (int i = 0; i < surf.GetSurfData().getSzX(); i++)
         // for (int i = 0; i < 2; i++)
         {
             mesh.vertices[vCounter] = (float)(i - 50) / 10.0f;
@@ -265,44 +257,45 @@ static Mesh genmesh(surf &surf)
             cCounter += 4;
         }
     }
-    for (int j = 0; j < surf.getSurfData().getSzY() - 1; j++)
+    for (int j = 0; j < surf.GetSurfData().getSzY() - 1; j++)
         // for (int j = 0; j <  50; j++)
-        for (int i = 0; i < surf.getSurfData().getSzX() - 1; i++)
+        for (int i = 0; i < surf.GetSurfData().getSzX() - 1; i++)
         // for (int i = 0; i < 1; i++)
         {
             {
-                mesh.indices[iCounter] = (i)*surf.getSurfData().getSzY() + (j);
-                mesh.indices[iCounter + 2] = (i + 1) * surf.getSurfData().getSzY() + (j);
-                mesh.indices[iCounter + 1] = (i)*surf.getSurfData().getSzY() + (j + 1);
+                mesh.indices[iCounter] = (i)*surf.GetSurfData().getSzY() + (j);
+                mesh.indices[iCounter + 2] = (i + 1) * surf.GetSurfData().getSzY() + (j);
+                mesh.indices[iCounter + 1] = (i)*surf.GetSurfData().getSzY() + (j + 1);
                 // if (i == 0)
                 //     std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter], mesh.indices[iCounter + 1], mesh.indices[iCounter + 2]) << std::endl;
-                mesh.indices[iCounter + 3] = (i + 1) * surf.getSurfData().getSzY() + (j);
-                mesh.indices[iCounter + 5] = (i + 1) * surf.getSurfData().getSzY() + (j + 1);
-                mesh.indices[iCounter + 4] = (i)*surf.getSurfData().getSzY() + (j + 1);
+                mesh.indices[iCounter + 3] = (i + 1) * surf.GetSurfData().getSzY() + (j);
+                mesh.indices[iCounter + 5] = (i + 1) * surf.GetSurfData().getSzY() + (j + 1);
+                mesh.indices[iCounter + 4] = (i)*surf.GetSurfData().getSzY() + (j + 1);
                 // if (i == 0)
                 //     std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter + 3], mesh.indices[iCounter + 4], mesh.indices[iCounter + 5]) << std::endl;
             }
             iCounter += 6;
         }
 
-    // for (int i = 0; i < surf.getSurfData().getSzX() - 1; i++)
+    // for (int i = 0; i < surf.GetSurfData().getSzX() - 1; i++)
     // {
-    //     for (int j = 0; j < surf.getSurfData().getSzY() - 1; j++)
+    //     for (int j = 0; j < surf.GetSurfData().getSzY() - 1; j++)
     //     {
-    //         mesh.indices[iCounter] = (i)*surf.getSurfData().getSzY() + (j);
-    //         mesh.indices[iCounter + 1] = (i + 1) * surf.getSurfData().getSzY() + (j + 1);
-    //         mesh.indices[iCounter + 2] = (i)*surf.getSurfData().getSzY() + (j + 1);
+    //         mesh.indices[iCounter] = (i)*surf.GetSurfData().getSzY() + (j);
+    //         mesh.indices[iCounter + 1] = (i + 1) * surf.GetSurfData().getSzY() + (j + 1);
+    //         mesh.indices[iCounter + 2] = (i)*surf.GetSurfData().getSzY() + (j + 1);
     //         // if (i == 0)
     //         //     std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter], mesh.indices[iCounter + 1], mesh.indices[iCounter + 2]) << std::endl;
-    //         mesh.indices[iCounter + 3] = (i)*surf.getSurfData().getSzY() + (j);
-    //         mesh.indices[iCounter + 4] = (i + 1) * surf.getSurfData().getSzY() + (j);
-    //         mesh.indices[iCounter + 5] = (i + 1) * surf.getSurfData().getSzY() + (j + 1);
+    //         mesh.indices[iCounter + 3] = (i)*surf.GetSurfData().getSzY() + (j);
+    //         mesh.indices[iCounter + 4] = (i + 1) * surf.GetSurfData().getSzY() + (j);
+    //         mesh.indices[iCounter + 5] = (i + 1) * surf.GetSurfData().getSzY() + (j + 1);
     //         // if (i == 0)
     //         //     std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter + 3], mesh.indices[iCounter + 4], mesh.indices[iCounter + 5]) << std::endl;
     //     }
     //     iCounter += 6;
     // }
 
+    std::cout << std::format("vCounter:{}, tcCounter:{}, nCounter:{}, cCounter:{}, iCounter:{}",vCounter, tcCounter, nCounter, cCounter, iCounter) << std::endl;
     UploadMesh(&mesh, false);
 
     return mesh;
@@ -312,20 +305,10 @@ int main(void)
 {
     // Initialization of general variables
     //--------------------------------------------------------------------------------------
-    MkDouble mean(2);
-    MkMatrix<double> covar(2, 2);
-
-    mean(0) = 0.0;
-    mean(1) = 0.0;
-
-    covar(0, 0) = 0.1;
-    covar(0, 1) = 0.0;
-    covar(1, 0) = 0.0;
-    covar(1, 1) = 0.1;
-
+    
     // test code block for gauss::eval
     // gauss gaussDist;
-    // gaussDist.init(mean, covar);
+    // gaussDist.Init(mean, covar);
 
     // double val, sval;
     // for (int i = -10; i <= 10; i++)
@@ -339,53 +322,46 @@ int main(void)
     // }
     // test code block ends
 
-    int scale = 1;
-    surf surfData;
-    surfData.init();
-    // surfData.init(mean, covar);
-    surfData.setRange(-5.0, 5.0, -5.0, 5.0);
-    surfData.setScale(scale);
-
-    // test code block for surf::bang
+    // test code block for surf::Bang
     // covar(0, 0) = 0.2;
     // covar(0, 1) = 0.0;
     // covar(1, 0) = 0.0;
     // covar(1, 1) = 1.0;
-    // surfData.setGauss(mean, covar);
-    // surfData.bang(0.0, 0.0);
+    // surf.setGauss(mean, covar);
+    // surf.Bang(0.0, 0.0);
 
     // covar(0, 0) = 1.1;
     // covar(0, 1) = 0.0;
     // covar(1, 0) = 0.0;
     // covar(1, 1) = 0.2;
-    // surfData.setGauss(mean, covar);
-    // surfData.bang(3.0, 3.0);
+    // surf.setGauss(mean, covar);
+    // surf.Bang(3.0, 3.0);
 
     // covar(0, 0) = 1.1;
     // covar(0, 1) = 0.0;
     // covar(1, 0) = 0.0;
     // covar(1, 1) = 1.2;
-    // surfData.setGauss(mean, covar);
-    // surfData.bang(1.5, 1.5);
+    // surf.setGauss(mean, covar);
+    // surf.Bang(1.5, 1.5);
     // test code block ends
 
-    // actual code block for surf::bang
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::normal_distribution<double> nd(0, 1);
-    std::normal_distribution<double> nd_05(0, 0.01);
-    std::normal_distribution<double> nd1(0, 0.1);
-    std::normal_distribution<double> nd2(0, 0.2);
-    std::normal_distribution<double> nd3(0, 0.3);
-    std::normal_distribution<double> nd4(0, 0.4);
-    std::normal_distribution<double> nd5(0, 0.5);
-    std::normal_distribution<double> nd6(0, 0.6);
-    std::normal_distribution<double> nd7(0, 0.7);
-    std::normal_distribution<double> nd8(0, 0.8);
-    std::normal_distribution<double> nd9(0, 0.9);
+    // actual code block for surf::Bang
 
-    std::uniform_real_distribution<double> nd_bx(12);
-    std::uniform_real_distribution<double> nd_by(12);
+    // std::random_device rd;
+    // std::mt19937 gen(rd());
+    // std::normal_distribution<double> nd(0, 1);
+    // std::normal_distribution<double> nd_05(0, 0.01);
+    // std::normal_distribution<double> nd1(0, 0.1);
+    // std::normal_distribution<double> nd2(0, 0.2);
+    // std::normal_distribution<double> nd3(0, 0.3);
+    // std::normal_distribution<double> nd4(0, 0.4);
+    // std::normal_distribution<double> nd5(0, 0.5);
+    // std::normal_distribution<double> nd6(0, 0.6);
+    // std::normal_distribution<double> nd7(0, 0.7);
+    // std::normal_distribution<double> nd8(0, 0.8);
+    // std::normal_distribution<double> nd9(0, 0.9);
+    // std::uniform_real_distribution<double> nd_bx(12);
+    // std::uniform_real_distribution<double> nd_by(12);
 
     // test code block for randon number generation
     // std::map<int, int> hist{};
@@ -399,95 +375,95 @@ int main(void)
     //               << std::string(p.second / 100, '*') << " " << p.second << '\n';
     // }
     // test code block ends
-    for (int cnt = 0; cnt < 10000 / scale; cnt++)
-    {
-        // std::cout << std::format("nd_cov(gen) = {:2}", std::abs(nd_cov(gen))) << std::endl;
-        // std::cout << std::format("nd_bx(gen) = {:2}", nd_bx(gen)-5) << std::endl;
-        // std::cout << std::format("nd_by(gen) = {:2}", nd_by(gen)-5) << std::endl;
 
-        if (cnt % 100 == 0)
-            // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
-            std::cout << std::format("\rcnt = {:5}%:", cnt / 100) << std::string(cnt / 100, '.') << std::flush;
+    // for (int cnt = 0; cnt < 10000 / scale; cnt++)
+    // {
+    //     // std::cout << std::format("nd_cov(gen) = {:2}", std::abs(nd_cov(gen))) << std::endl;
+    //     // std::cout << std::format("nd_bx(gen) = {:2}", nd_bx(gen)-5) << std::endl;
+    //     // std::cout << std::format("nd_by(gen) = {:2}", nd_by(gen)-5) << std::endl;
 
-        covar(1, 1) = covar(0, 0) = std::max(std::abs(nd1(gen)), 0.01);
-        covar(1, 1) = 1 * covar(0, 0);
-        // covar(1, 1) = std::max(std::abs(nd1(gen)), 0.01);
-        surfData.setGauss(mean, covar);
-        if (nd(gen) > 0)
-            surfData.bang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-        else
-            surfData.rbang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-    }
+    //     if (cnt % 100 == 0)
+    //         // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
+    //         std::cout << std::format("\rcnt = {:5}%:", cnt / 100) << std::string(cnt / 100, '.') << std::flush;
 
-    for (int cnt = 0; cnt < 1000 / scale; cnt++)
-    {
-        // std::cout << std::format("nd_cov(gen) = {:2}", std::abs(nd_cov(gen))) << std::endl;
-        // std::cout << std::format("nd_bx(gen) = {:2}", nd_bx(gen)-5) << std::endl;
-        // std::cout << std::format("nd_by(gen) = {:2}", nd_by(gen)-5) << std::endl;
+    //     covar(0, 0) = std::max(std::abs(nd_05(gen)), 0.01);
+    //     covar(1, 1) = 1 * covar(0, 0);
+        
+    //     surf.setGauss(mean, covar);
+    //     if (nd(gen) > 0)
+    //         surf.Bang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
+    //     else
+    //         surf.NegBang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
+    // }
 
-        if (cnt % 100 == 0)
-            // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
-            std::cout << std::format("\rcnt = {:5}%:", cnt / 10) << std::string(cnt / 10, '.') << std::flush;
+    // for (int cnt = 0; cnt < 200 / scale; cnt++)
+    // {
+    //     // std::cout << std::format("nd_cov(gen) = {:2}", std::abs(nd_cov(gen))) << std::endl;
+    //     // std::cout << std::format("nd_bx(gen) = {:2}", nd_bx(gen)-5) << std::endl;
+    //     // std::cout << std::format("nd_by(gen) = {:2}", nd_by(gen)-5) << std::endl;
 
-        covar(1, 1) = covar(0, 0) = std::max(std::abs(nd1(gen)), 0.01);
-        covar(1, 1) = 20 * covar(0, 0);
-        // covar(1, 1) = std::max(std::abs(nd5(gen)), 0.01);
-        surfData.setGauss(mean, covar);
-        if (nd(gen) > 0)
-            surfData.bang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-        else
-            surfData.rbang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-    }
+    //     if (cnt % 2 == 0)
+    //         // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
+    //         std::cout << std::format("\rcnt = {:5}%:", cnt / 2) << std::string(cnt / 2, '.') << std::flush;
 
-    std::cout << std::endl;
+    //     covar(0, 0) = std::max(std::abs(_nd5(_gen)), 0.01);
+    //     covar(1, 1) = 2 * covar(0, 0);
+        
+    //     surf.SetGauss(mean, covar);
+    //     if (_nd(_gen) > 0)
+    //         surf.Bang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
+    //     else
+    //         surf.NegBang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
+    // }
+
+    // std::cout << std::endl;
 
     // for (int cnt = 0; cnt < 100 / scale; cnt++)
     // {
     //     covar(0, 0) = std::max(std::abs(nd8(gen)), 0.01);
     //     covar(1, 1) = std::max(std::abs(nd8(gen)), 0.01);
-    //     surfData.setGauss(mean, covar);
+    //     surf.setGauss(mean, covar);
     //     if (nd(gen) > 0)
-    //         surfData.bang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
+    //         surf.Bang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
     //     else
-    //         surfData.rbang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
+    //         surf.NegBang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
     // }
 
     // for (int cnt = 0; cnt < 100 / scale; cnt++)
     // {
     //     covar(0, 0) = std::max(std::abs(nd7(gen)), 0.01);
     //     covar(1, 1) = std::max(std::abs(nd7(gen)), 0.01);
-    //     surfData.setGauss(mean, covar);
+    //     surf.setGauss(mean, covar);
     //     if (nd(gen) > 0)
-    //         surfData.bang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
+    //         surf.Bang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
     //     else
-    //         surfData.rbang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
+    //         surf.NegBang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
     // }
 
     // for (int cnt = 0; cnt < 100 / scale; cnt++)
     // {
     //     covar(0, 0) = std::max(std::abs(nd6(gen)), 0.01);
     //     covar(1, 1) = std::max(std::abs(nd6(gen)), 0.01);
-    //     surfData.setGauss(mean, covar);
+    //     surf.setGauss(mean, covar);
     //     if (nd(gen) > 0)
-    //         surfData.bang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
+    //         surf.Bang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
     //     else
-    //         surfData.rbang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
+    //         surf.NegBang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
     // }
 
-    // surfData.out();
+    // surf.out();
 
     // mesh rs;
     // rs(1, 1) = 1;
     // rs(99, 99) = 99.0;
-    // rs.update(surfData);
+    // rs.update(surf);
     // // rs.log();
 
     // Initialization of raylib
     //--------------------------------------------------------------------------------------
     const int screenWidth = 1000;
     const int screenHeight = 1000;
-    // mesh<double> rockSurface;
-
+    
     InitWindow(screenWidth, screenHeight, "Rock Surface");
 
     Camera3D camera = {0};
@@ -498,14 +474,38 @@ int main(void)
     camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
     Vector3 targetPosition = {0.0f, 0.0f, -0.5f};
 
-    Mesh mesh, mesh2;
-    mesh = genmesh(surfData);
-    // mesh2 = genMeshTest();
-
     Texture2D texture = LoadTexture("../resources/space.png");
     Shader shader = LoadShader(TextFormat("../resources/shaders/glsl330/base.vs"), TextFormat("../resources/shaders/glsl330/base.fs"));
     Matrix trans = MatrixIdentity();
     Material material = LoadMaterialDefault();
+
+    // Mesh mesh, mesh2;
+    // UnloadMesh(mesh);
+    // mesh = genmesh(surf);
+    // mesh2 = genMeshTest();
+
+    int scale = 1;
+
+    MkDouble mean(2);
+    MkMatrix<double> covar(2, 2);
+
+    mean(0) = 0.0;
+    mean(1) = 0.0;
+
+    covar(0, 0) = 0.1;
+    covar(0, 1) = 0.0;
+    covar(1, 0) = 0.0;
+    covar(1, 1) = 0.1;
+
+    MkSurf surf;
+    surf.Init();
+    surf.SetRange(-5.0, 5.0, -5.0, 5.0);
+    surf.SetScale(scale);
+    surf.GenSurf();
+
+    MkMesh mkmesh;
+    mkmesh.Update(surf);
+    Mesh &mesh = mkmesh.GetMesh();
 
     SetTargetFPS(15); // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -528,35 +528,35 @@ int main(void)
         DrawMesh(mesh, material, trans); // ***
         // DrawMesh(mesh2, material, trans); // ***
 
-        // for (int i = 0; i < surfData.getSurfData().getSzX() - 1; i++)
+        // for (int i = 0; i < surf.getSurfData().getSzX() - 1; i++)
         // {
-        //     for (int j = 0; j < surfData.getSurfData().getSzY() - 1; j++)
+        //     for (int j = 0; j < surf.getSurfData().getSzY() - 1; j++)
         //     {
         //         // std::cout << std::format("({:3}, {:3} )", screenWidth * float(i) / 100.0f, screenWidth * float(i + 1) / 100.0f) << std::endl;
-        //         // DrawTriangle3D((Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j) / 100.0f, (float)surfData(i, j)},
-        //         //                (Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surfData(i, j + 1)},
-        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j) / 100.0f, (float)surfData(i + 1, j)}, WHITE);
-        //         // DrawTriangle3D((Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surfData(i, j + 1)},
-        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surfData(i + 1, j + 1)},
-        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j) / 100.0f, (float)surfData(i + 1, j)}, YELLOW);
-        //         DrawTriangle3D((Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j)},
-        //                        (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)},
-        //                        (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)}, YELLOW);
-        //         DrawTriangle3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)},
-        //                        (Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j + 1)},
-        //                        (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)}, YELLOW);
-        //         DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j)},
-        //                    (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)}, BLACK);
-        //         DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)},
-        //                    (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)}, BLACK);
-        //         DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)},
-        //                    (Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j)}, BLACK);
-        //         DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)},
-        //                    (Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j + 1)}, BLACK);
-        //         DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j + 1)},
-        //                    (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)}, BLACK);
-        //         DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surfData(i, j + 1)},
-        //                    (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surfData(i + 1, j)}, BLACK);
+        //         // DrawTriangle3D((Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j) / 100.0f, (float)surf(i, j)},
+        //         //                (Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surf(i, j + 1)},
+        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j) / 100.0f, (float)surf(i + 1, j)}, WHITE);
+        //         // DrawTriangle3D((Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surf(i, j + 1)},
+        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surf(i + 1, j + 1)},
+        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j) / 100.0f, (float)surf(i + 1, j)}, YELLOW);
+        //         DrawTriangle3D((Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i, j)},
+        //                        (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)},
+        //                        (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)}, YELLOW);
+        //         DrawTriangle3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)},
+        //                        (Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j + 1)},
+        //                        (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)}, YELLOW);
+        //         DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i, j)},
+        //                    (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)}, BLACK);
+        //         DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)},
+        //                    (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)}, BLACK);
+        //         DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)},
+        //                    (Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i, j)}, BLACK);
+        //         DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)},
+        //                    (Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j + 1)}, BLACK);
+        //         DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j + 1)},
+        //                    (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)}, BLACK);
+        //         DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)},
+        //                    (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)}, BLACK);
         //     }
         //     // std::cout << std::endl;
         // }

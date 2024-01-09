@@ -1,6 +1,15 @@
-#include "surf.hpp"
+#include "MkSurf.hpp"
 
-surf::surf()
+MkSurf::MkSurf()
+{
+    Init();
+}
+
+MkSurf::~MkSurf()
+{
+}
+
+void MkSurf::Init()
 {
     scale = 1;
     xMin = -1;
@@ -9,14 +18,7 @@ surf::surf()
     yMax = 1;
 
     this->surfData.Initialize(100, 100);
-}
 
-surf::~surf()
-{
-}
-
-void surf::init()
-{
     MkDouble mean(2);
     MkMatrix<double> covar(2, 2);
 
@@ -28,12 +30,12 @@ void surf::init()
     covar(1, 0) = 0.0;
     covar(1, 1) = 1.0;
 
-    this->gaussDist.init(mean, covar);
+    this->gaussDist.Init(mean, covar);
 }
 
-void surf::bang(double cx, double cy)
+void MkSurf::Bang(double cx, double cy)
 {
-    float dev = std::max(this->gaussDist.getCovar()(0, 0), this->gaussDist.getCovar()(1, 1));
+    float dev = std::max(this->gaussDist.GetCovar()(0, 0), this->gaussDist.GetCovar()(1, 1));
     for (int i = 0; i < 100; i++)
         for (int j = 0; j < 100; j++)
         {
@@ -42,14 +44,14 @@ void surf::bang(double cx, double cy)
             float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
             if (dis > 3 * dev)
                 continue;
-            double z = this->scale * this->gaussDist.seval(x - cx, y - cy);
+            double z = this->scale * this->gaussDist.ScaledEval(x - cx, y - cy);
             this->surfData(i, j) += z;
         }
 }
 
-void surf::rbang(double cx, double cy)
+void MkSurf::NegBang(double cx, double cy)
 {
-    float dev = std::max(this->gaussDist.getCovar()(0, 0), this->gaussDist.getCovar()(1, 1));
+    float dev = std::max(this->gaussDist.GetCovar()(0, 0), this->gaussDist.GetCovar()(1, 1));
     for (int i = 0; i < 100; i++)
         for (int j = 0; j < 100; j++)
         {
@@ -58,12 +60,39 @@ void surf::rbang(double cx, double cy)
             float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
             if (dis > 3 * dev)
                 continue;
-            double z = this->scale * this->gaussDist.seval(x - cx, y - cy);
+            double z = this->scale * this->gaussDist.ScaledEval(x - cx, y - cy);
             this->surfData(i, j) -= z;
         }
 }
 
-void surf::log()
+void MkSurf::GenSurf()
+{
+    MkDouble &mean = this->gaussDist.GetMean();
+    MkMatrix<double> &covar = this->gaussDist.GetCovar();
+    int N = 100, N1 = 1;
+
+    for (int cnt = 0; cnt < N / scale; cnt++)
+    {
+        // std::cout << std::format("nd_cov(gen) = {:2}", std::abs(nd_cov(gen))) << std::endl;
+        // std::cout << std::format("nd_bx(gen) = {:2}", nd_bx(gen)-5) << std::endl;
+        // std::cout << std::format("nd_by(gen) = {:2}", nd_by(gen)-5) << std::endl;
+
+        if (cnt % (N / N1) == 0)
+            // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
+            std::cout << std::format("\rcnt = {:5}%:", cnt / N1) << std::string(cnt / N1, '.') << std::flush;
+
+        covar(0, 0) = std::max(std::abs(_nd5(_gen)), 0.01);
+        covar(1, 1) = 2 * covar(0, 0);
+
+        SetGauss(mean, covar);
+        if (_nd(_gen) > 0)
+            Bang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
+        else
+            NegBang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
+    }
+}
+
+void MkSurf::Log()
 {
     for (int i = 0; i < 100; i++)
         for (int j = 0; j < 100; j++)
@@ -71,7 +100,7 @@ void surf::log()
     return;
 }
 
-void surf::out()
+void MkSurf::Out() // formatted screen out
 {
 
     for (int j = 0; j < 100; j++)
@@ -87,12 +116,12 @@ void surf::out()
     return;
 }
 
-double &surf::operator()(int i, int j)
+double &MkSurf::operator()(int i, int j)
 {
     return this->surfData(i, j);
 }
 
-double &surf::operator()(float x, float y)
+double &MkSurf::operator()(float x, float y)
 {
     static double nil = 0;
     nil = 0;
@@ -104,7 +133,7 @@ double &surf::operator()(float x, float y)
         return nil; // out of range, return nil value to invalidate the updating of mesh
 }
 
-void surf::test()
+void MkSurf::Test() // simple random generation test code
 {
     std::random_device rd;
     std::mt19937 gen(rd());
