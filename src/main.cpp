@@ -4,7 +4,6 @@
 // This is a simple raylib program that draws a hopefully realistic joint surfaces
 // of a rock surface. The program is written in C++ and uses raylib as a library.
 
-
 // Mesh, vertex data and vao/vbo
 // typedef struct Mesh {
 //     int vertexCount;        // Number of vertices stored in arrays
@@ -295,7 +294,7 @@ static Mesh genmesh(MkSurf &surf)
     //     iCounter += 6;
     // }
 
-    std::cout << std::format("vCounter:{}, tcCounter:{}, nCounter:{}, cCounter:{}, iCounter:{}",vCounter, tcCounter, nCounter, cCounter, iCounter) << std::endl;
+    std::cout << std::format("vCounter:{}, tcCounter:{}, nCounter:{}, cCounter:{}, iCounter:{}", vCounter, tcCounter, nCounter, cCounter, iCounter) << std::endl;
     UploadMesh(&mesh, false);
 
     return mesh;
@@ -305,7 +304,7 @@ int main(void)
 {
     // Initialization of general variables
     //--------------------------------------------------------------------------------------
-    
+
     // test code block for gauss::eval
     // gauss gaussDist;
     // gaussDist.Init(mean, covar);
@@ -388,7 +387,7 @@ int main(void)
 
     //     covar(0, 0) = std::max(std::abs(nd_05(gen)), 0.01);
     //     covar(1, 1) = 1 * covar(0, 0);
-        
+
     //     surf.setGauss(mean, covar);
     //     if (nd(gen) > 0)
     //         surf.Bang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
@@ -408,7 +407,7 @@ int main(void)
 
     //     covar(0, 0) = std::max(std::abs(_nd5(_gen)), 0.01);
     //     covar(1, 1) = 2 * covar(0, 0);
-        
+
     //     surf.SetGauss(mean, covar);
     //     if (_nd(_gen) > 0)
     //         surf.Bang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
@@ -461,9 +460,34 @@ int main(void)
 
     // Initialization of raylib
     //--------------------------------------------------------------------------------------
+    int scale = 1;
+
+    MkDouble mean(2);
+    MkMatrix<double> covar(2, 2);
+
+    mean(0) = 0.0;
+    mean(1) = 0.0;
+
+    covar(0, 0) = 0.1;
+    covar(0, 1) = 0.0;
+    covar(1, 0) = 0.0;
+    covar(1, 1) = 0.1;
+
+    MkSurf surf;
+    surf.Init();
+    surf.SetNumIter(20000);
+    surf.SetAniso(1);
+    surf.SetRange(-5.0, 5.0, -5.0, 5.0);
+    surf.SetScale(scale);
+    surf.SetAngle(0.0);
+    surf.GenSurf(_nd_05);
+    surf.SetNumIter(1000);
+    surf.SetAniso(2);
+    surf.GenSurf(_nd2);
+
     const int screenWidth = 1000;
     const int screenHeight = 1000;
-    
+
     InitWindow(screenWidth, screenHeight, "Rock Surface");
 
     Camera3D camera = {0};
@@ -483,25 +507,6 @@ int main(void)
     // UnloadMesh(mesh);
     // mesh = genmesh(surf);
     // mesh2 = genMeshTest();
-
-    int scale = 1;
-
-    MkDouble mean(2);
-    MkMatrix<double> covar(2, 2);
-
-    mean(0) = 0.0;
-    mean(1) = 0.0;
-
-    covar(0, 0) = 0.1;
-    covar(0, 1) = 0.0;
-    covar(1, 0) = 0.0;
-    covar(1, 1) = 0.1;
-
-    MkSurf surf;
-    surf.Init();
-    surf.SetRange(-5.0, 5.0, -5.0, 5.0);
-    surf.SetScale(scale);
-    surf.GenSurf();
 
     MkMesh mkmesh;
     mkmesh.Update(surf);

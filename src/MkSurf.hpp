@@ -38,6 +38,21 @@ public:
         this->scale = scale;
     }
 
+    void SetNumIter(int numiter)
+    {
+        this->NumIter = numiter;
+    }
+
+    void SetAniso(float aniso)
+    {
+        this->Aniso = aniso;
+    }
+
+    void SetAngle(float angle)
+    {
+        this->Angle = angle * M_PI / 180.0;
+    }
+
     MkDouble &GetSurfData()
     {
         return this->surfData;
@@ -46,7 +61,7 @@ public:
     void Bang(double cx, double cy);
     void NegBang(double cx, double cy);
 
-    void GenSurf();
+    void GenSurf(std::normal_distribution<double> &);
 
     void Log();
     void Out();
@@ -54,7 +69,7 @@ public:
     double &operator()(float x, float y);
     void Test();
 
-    MkSurf& operator=(MkSurf &surf)
+    MkSurf &operator=(MkSurf &surf)
     {
         this->surfData = surf.surfData;
         this->gaussDist = surf.gaussDist;
@@ -63,10 +78,13 @@ public:
         this->yMin = surf.yMin;
         this->yMax = surf.yMax;
         this->scale = surf.scale;
+        this->NumIter = surf.NumIter;
+        this->Aniso = surf.Aniso;
+        this->Angle = surf.Angle;
         return *this;
     }
 
-    MkSurf& operator=(MkSurf &&surf)
+    MkSurf &operator=(MkSurf &&surf)
     {
         this->surfData = surf.surfData;
         this->gaussDist = surf.gaussDist;
@@ -75,6 +93,9 @@ public:
         this->yMin = surf.yMin;
         this->yMax = surf.yMax;
         this->scale = surf.scale;
+        this->NumIter = surf.NumIter;
+        this->Aniso = surf.Aniso;
+        this->Angle = surf.Angle;
         return *this;
     }
 
@@ -83,4 +104,7 @@ private:
     MkGauss gaussDist;
     float xMin, xMax, yMin, yMax;
     float scale;
+    int NumIter;
+    float Aniso;
+    float Angle;
 };

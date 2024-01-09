@@ -65,24 +65,34 @@ void MkSurf::NegBang(double cx, double cy)
         }
 }
 
-void MkSurf::GenSurf()
+void MkSurf::GenSurf(std::normal_distribution<double> &nd)
 {
+    std::random_device rd;
+    std::mt19937 gen(rd());
     MkDouble &mean = this->gaussDist.GetMean();
-    MkMatrix<double> &covar = this->gaussDist.GetCovar();
-    int N = 100, N1 = 1;
+    MkMatrix<double> covar(2, 2), covar1(2, 2);
+    int N = NumIter, N1 = N / 100;
 
-    for (int cnt = 0; cnt < N / scale; cnt++)
+    for (int cnt = 0; cnt < N; cnt++)
     {
         // std::cout << std::format("nd_cov(gen) = {:2}", std::abs(nd_cov(gen))) << std::endl;
         // std::cout << std::format("nd_bx(gen) = {:2}", nd_bx(gen)-5) << std::endl;
         // std::cout << std::format("nd_by(gen) = {:2}", nd_by(gen)-5) << std::endl;
 
-        if (cnt % (N / N1) == 0)
+        if (cnt % (N1) == 0)
             // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
             std::cout << std::format("\rcnt = {:5}%:", cnt / N1) << std::string(cnt / N1, '.') << std::flush;
 
-        covar(0, 0) = std::max(std::abs(_nd5(_gen)), 0.01);
-        covar(1, 1) = 2 * covar(0, 0);
+        covar1(0, 1) = covar1(1, 0) = 0;
+        covar1(0, 0) = std::max(std::abs(nd(gen)), 0.01);
+        covar1(1, 1) = Aniso * covar1(0, 0);
+        
+        covar(0,0) = std::cos(Angle)*covar1(0,0) - std::sin(Angle)*covar1(0,1);
+        covar(0,1) = std::sin(Angle)*covar1(0,0) + std::cos(Angle)*covar1(0,1);
+        covar(1,0) = std::cos(Angle)*covar1(1,0) - std::sin(Angle)*covar1(1,1);
+        covar(1,1) = std::sin(Angle)*covar1(1,0) + std::cos(Angle)*covar1(1,1);
+
+        // std::cout << std::format("covar(0,0) = {:3} covar1(0,0) = {:3}", covar(0,0), covar1(0,0)) << std::endl;
 
         SetGauss(mean, covar);
         if (_nd(_gen) > 0)
@@ -90,6 +100,7 @@ void MkSurf::GenSurf()
         else
             NegBang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
     }
+    std::cout << std::endl;
 }
 
 void MkSurf::Log()
