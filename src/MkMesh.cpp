@@ -14,6 +14,7 @@ MkMesh::MkMesh(MkSurf &surfData)
 
 MkMesh::~MkMesh()
 {
+    UnloadMesh(meshData); // TODO: check if this is safe to do...
 }
 
 void MkMesh::SetupMesh()
@@ -73,7 +74,7 @@ void MkMesh::SetupMesh()
         {
             meshData.vertices[vCounter] = (float)(i - 50) / 10.0f;
             meshData.vertices[vCounter + 1] = (float)(j - 50) / 10.0f;
-            meshData.vertices[vCounter + 2] = (float)surf_(i, j) / 100.0f + 1;
+            meshData.vertices[vCounter + 2] = (float)surf_(i, j) / 50.0f;
             vCounter += 3;
 
             meshData.texcoords[tcCounter] = (float)i / 100.0f;
@@ -114,7 +115,7 @@ void MkMesh::SetupMesh()
         }
     }
 
-    std::cout << std::format("vCounter:{}, tcCounter:{}, nCounter:{}, cCounter:{}, iCounter:{}",vCounter, tcCounter, nCounter, cCounter, iCounter) << std::endl;
+    std::cout << std::format("vCounter:{}, tcCounter:{}, nCounter:{}, cCounter:{}, iCounter:{}", vCounter, tcCounter, nCounter, cCounter, iCounter) << std::endl;
     std::cout << "setup loc 3" << std::endl;
     UploadMesh(&meshData, false);
     std::cout << "setup loc 4" << std::endl;

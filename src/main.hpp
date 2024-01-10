@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <filesystem>
 #include <random>
 #include <raylib.h>
 #include <raymath.h>

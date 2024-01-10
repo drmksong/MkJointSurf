@@ -65,402 +65,37 @@
 //     int format;             // Data format (PixelFormat type)
 // } Texture;
 
-// Generate a simple triangle mesh from code
-
-static Mesh genMeshTest(void)
+int main(int argc, char **argv)
 {
-    Mesh mesh = {0};
-    mesh.triangleCount = 2;
-    mesh.vertexCount = mesh.triangleCount * 3;
-    mesh.vertices = (float *)MemAlloc(mesh.vertexCount * 3 * sizeof(float));  // 3 vertices, 3 coordinates each (x, y, z)
-    mesh.texcoords = (float *)MemAlloc(mesh.vertexCount * 2 * sizeof(float)); // 3 vertices, 2 coordinates each (x, y)
-    mesh.normals = (float *)MemAlloc(mesh.vertexCount * 3 * sizeof(float));   // 3 vertices, 3 coordinates each (x, y, z)
-    mesh.colors = (unsigned char *)MemAlloc(mesh.vertexCount * 4 * sizeof(unsigned char));
-    mesh.indices = (unsigned short *)malloc(mesh.triangleCount * 3 * sizeof(unsigned short));
-
-    // Vertex at (0, 0, 0.5)
-    mesh.vertices[0] = 0;
-    mesh.vertices[1] = 0;
-    mesh.vertices[2] = 0.5;
-    mesh.normals[0] = 0;
-    mesh.normals[1] = 0;
-    mesh.normals[2] = 1;
-    mesh.texcoords[0] = 0;
-    mesh.texcoords[1] = 0;
-    mesh.colors[0] = 254;
-    mesh.colors[1] = 254;
-    mesh.colors[2] = 254;
-    mesh.colors[3] = 254;
-
-    // Vertex at (1, 2, 0)
-    mesh.vertices[3] = 1;
-    mesh.vertices[4] = 2;
-    mesh.vertices[5] = 0.0;
-    mesh.normals[3] = 0;
-    mesh.normals[4] = 0;
-    mesh.normals[5] = 1;
-    mesh.texcoords[2] = 0.5f;
-    mesh.texcoords[3] = 1.0f;
-    mesh.colors[4] = 254;
-    mesh.colors[5] = 0;
-    mesh.colors[6] = 254;
-    mesh.colors[7] = 254;
-
-    // Vertex at (2, 0, 0)
-    mesh.vertices[6] = 2;
-    mesh.vertices[7] = 0;
-    mesh.vertices[8] = 0.;
-    mesh.normals[6] = 0;
-    mesh.normals[7] = 0;
-    mesh.normals[8] = 1;
-    mesh.texcoords[4] = 1;
-    mesh.texcoords[5] = 0;
-    mesh.colors[8] = 254;
-    mesh.colors[9] = 254;
-    mesh.colors[10] = 0;
-    mesh.colors[11] = 254;
-
-    // // Vertex at (2, 0, 0)
-    // mesh.vertices[9] = 2;
-    // mesh.vertices[10] = 0;
-    // mesh.vertices[11] = 0.;
-    // mesh.normals[9] = 0;
-    // mesh.normals[10] = 0;
-    // mesh.normals[11] = 1;
-    // mesh.texcoords[6] = 0;
-    // mesh.texcoords[7] = 0;
-    // mesh.colors[12] = 254;
-    // mesh.colors[13] = 254;
-    // mesh.colors[14] = 0;
-    // mesh.colors[15] = 254;
-
-    // // Vertex at (1, 2, 0)
-    // mesh.vertices[12] = 1;
-    // mesh.vertices[13] = 2;
-    // mesh.vertices[14] = 0.;
-    // mesh.normals[12] = 0;
-    // mesh.normals[13] = 0;
-    // mesh.normals[14] = 1;
-    // mesh.texcoords[8] = 0.5f;
-    // mesh.texcoords[9] = 1.0f;
-    // mesh.colors[16] = 254;
-    // mesh.colors[17] = 0;
-    // mesh.colors[18] = 254;
-    // mesh.colors[19] = 254;
-
-    // // Vertex at (3, 2, 0.5)
-    // mesh.vertices[15] = 3;
-    // mesh.vertices[16] = 2;
-    // mesh.vertices[17] = 0.5;
-    // mesh.normals[15] = 0;
-    // mesh.normals[16] = 0;
-    // mesh.normals[17] = 1;
-    // mesh.texcoords[10] = 1;
-    // mesh.texcoords[11] = 0;
-    // mesh.colors[20] = 254;
-    // mesh.colors[21] = 254;
-    // mesh.colors[22] = 254;
-    // mesh.colors[23] = 254;
-
-    mesh.vertices[9] = 3;
-    mesh.vertices[10] = 2;
-    mesh.vertices[11] = 0.5;
-    mesh.normals[9] = 0;
-    mesh.normals[10] = 0;
-    mesh.normals[11] = 1;
-    mesh.texcoords[6] = 1;
-    mesh.texcoords[7] = 0;
-    mesh.colors[12] = 254;
-    mesh.colors[13] = 254;
-    mesh.colors[14] = 254;
-    mesh.colors[15] = 254;
-
-    // mesh.indices[0] = 0;
-    // mesh.indices[1] = 2;
-    // mesh.indices[2] = 1;
-    // mesh.indices[3] = 3;
-    // mesh.indices[4] = 5;
-    // mesh.indices[5] = 4;
-
-    mesh.indices[0] = 0;
-    mesh.indices[1] = 2;
-    mesh.indices[2] = 1;
-    mesh.indices[3] = 2;
-    mesh.indices[4] = 3;
-    mesh.indices[5] = 1;
-
-    // Upload mesh data from CPU (RAM) to GPU (VRAM) memory
-    UploadMesh(&mesh, false);
-
-    return mesh;
-}
-
-static Mesh genmesh(MkSurf &surf)
-{
-    Mesh mesh = {0};
-
-    mesh.vertexCount = surf.GetSurfData().getSzX() * surf.GetSurfData().getSzY();
-    mesh.triangleCount = (surf.GetSurfData().getSzX() - 1) * (surf.GetSurfData().getSzY() - 1) * 2;
-
-    mesh.vertices = (float *)MemAlloc(mesh.vertexCount * 3 * sizeof(float));
-    mesh.texcoords = (float *)MemAlloc(mesh.vertexCount * 2 * sizeof(float));
-    mesh.normals = (float *)MemAlloc(mesh.vertexCount * 3 * sizeof(float));
-    mesh.colors = (unsigned char *)MemAlloc(mesh.vertexCount * 4 * sizeof(unsigned char));
-    mesh.indices = (unsigned short *)MemAlloc(mesh.triangleCount * 3 * sizeof(unsigned short));
-
-    int vCounter = 0;
-    int tcCounter = 0;
-    int nCounter = 0;
-    int cCounter = 0;
-    int iCounter = 0;
-
-    int szX = surf.GetSurfData().getSzX();
-    int szY = surf.GetSurfData().getSzY();
-    double maxValue = -1e10, minValue = 1e10;
-
-    for (int j = 0; j < szY; j++)
-    {
-        for (int i = 0; i < szX; i++)
-        {
-            maxValue = std::max(maxValue, surf(i, j));
-            minValue = std::min(minValue, surf(i, j));
-        }
-    }
-
-    for (int j = 0; j < surf.GetSurfData().getSzY(); j++)
-    // for (int j = 0; j < 3; j++)
-    {
-        for (int i = 0; i < surf.GetSurfData().getSzX(); i++)
-        // for (int i = 0; i < 2; i++)
-        {
-            mesh.vertices[vCounter] = (float)(i - 50) / 10.0f;
-            mesh.vertices[vCounter + 1] = (float)(j - 50) / 10.0f;
-            mesh.vertices[vCounter + 2] = (float)surf(i, j) / 100.0f + 1;
-            if (j == 0)
-                std::cout << std::format("i{:3},j{:3} : ({:3}({:3}), {:3}({:3}), {:3}({:3}) )", i, j, mesh.vertices[vCounter], vCounter, mesh.vertices[vCounter + 1], vCounter + 1, mesh.vertices[vCounter + 2], vCounter + 2) << std::endl;
-            vCounter += 3;
-
-            mesh.texcoords[tcCounter] = (float)i / 100.0f;
-            mesh.texcoords[tcCounter + 1] = (float)j / 100.0f;
-            tcCounter += 2;
-
-            mesh.normals[nCounter] = 0.0f;
-            mesh.normals[nCounter + 1] = 0.0f;
-            mesh.normals[nCounter + 2] = 1.0f;
-            nCounter += 3;
-
-            mesh.colors[cCounter + 0] = int((surf(i, j) - minValue) / (maxValue - minValue) * 255);
-            mesh.colors[cCounter + 1] = 125;
-            mesh.colors[cCounter + 2] = int((maxValue - surf(i, j)) / (maxValue - minValue) * 255);
-            mesh.colors[cCounter + 3] = 255;
-            cCounter += 4;
-        }
-    }
-    for (int j = 0; j < surf.GetSurfData().getSzY() - 1; j++)
-        // for (int j = 0; j <  50; j++)
-        for (int i = 0; i < surf.GetSurfData().getSzX() - 1; i++)
-        // for (int i = 0; i < 1; i++)
-        {
-            {
-                mesh.indices[iCounter] = (i)*surf.GetSurfData().getSzY() + (j);
-                mesh.indices[iCounter + 2] = (i + 1) * surf.GetSurfData().getSzY() + (j);
-                mesh.indices[iCounter + 1] = (i)*surf.GetSurfData().getSzY() + (j + 1);
-                // if (i == 0)
-                //     std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter], mesh.indices[iCounter + 1], mesh.indices[iCounter + 2]) << std::endl;
-                mesh.indices[iCounter + 3] = (i + 1) * surf.GetSurfData().getSzY() + (j);
-                mesh.indices[iCounter + 5] = (i + 1) * surf.GetSurfData().getSzY() + (j + 1);
-                mesh.indices[iCounter + 4] = (i)*surf.GetSurfData().getSzY() + (j + 1);
-                // if (i == 0)
-                //     std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter + 3], mesh.indices[iCounter + 4], mesh.indices[iCounter + 5]) << std::endl;
-            }
-            iCounter += 6;
-        }
-
-    // for (int i = 0; i < surf.GetSurfData().getSzX() - 1; i++)
-    // {
-    //     for (int j = 0; j < surf.GetSurfData().getSzY() - 1; j++)
-    //     {
-    //         mesh.indices[iCounter] = (i)*surf.GetSurfData().getSzY() + (j);
-    //         mesh.indices[iCounter + 1] = (i + 1) * surf.GetSurfData().getSzY() + (j + 1);
-    //         mesh.indices[iCounter + 2] = (i)*surf.GetSurfData().getSzY() + (j + 1);
-    //         // if (i == 0)
-    //         //     std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter], mesh.indices[iCounter + 1], mesh.indices[iCounter + 2]) << std::endl;
-    //         mesh.indices[iCounter + 3] = (i)*surf.GetSurfData().getSzY() + (j);
-    //         mesh.indices[iCounter + 4] = (i + 1) * surf.GetSurfData().getSzY() + (j);
-    //         mesh.indices[iCounter + 5] = (i + 1) * surf.GetSurfData().getSzY() + (j + 1);
-    //         // if (i == 0)
-    //         //     std::cout << std::format("{:3}, {:3} : ({:3}, {:3}, {:3} )", i, j, mesh.indices[iCounter + 3], mesh.indices[iCounter + 4], mesh.indices[iCounter + 5]) << std::endl;
-    //     }
-    //     iCounter += 6;
-    // }
-
-    std::cout << std::format("vCounter:{}, tcCounter:{}, nCounter:{}, cCounter:{}, iCounter:{}", vCounter, tcCounter, nCounter, cCounter, iCounter) << std::endl;
-    UploadMesh(&mesh, false);
-
-    return mesh;
-}
-
-int main(void)
-{
-    // Initialization of general variables
-    //--------------------------------------------------------------------------------------
-
-    // test code block for gauss::eval
-    // gauss gaussDist;
-    // gaussDist.Init(mean, covar);
-
-    // double val, sval;
-    // for (int i = -10; i <= 10; i++)
-    // {
-    //     for (int j = -10; j <= 10; j++)
-    //     {
-    //         val = gaussDist.eval(i / 10.0, j / 10.0);
-    //         sval = gaussDist.seval(i / 10.0, j / 10.0);
-    //         std::printf("evaluation and scaled evaluation at (%f,%f) are %f and %f repectively.\n", i / 10.0, j / 10.0, val, sval);
-    //     }
-    // }
-    // test code block ends
-
-    // test code block for surf::Bang
-    // covar(0, 0) = 0.2;
-    // covar(0, 1) = 0.0;
-    // covar(1, 0) = 0.0;
-    // covar(1, 1) = 1.0;
-    // surf.setGauss(mean, covar);
-    // surf.Bang(0.0, 0.0);
-
-    // covar(0, 0) = 1.1;
-    // covar(0, 1) = 0.0;
-    // covar(1, 0) = 0.0;
-    // covar(1, 1) = 0.2;
-    // surf.setGauss(mean, covar);
-    // surf.Bang(3.0, 3.0);
-
-    // covar(0, 0) = 1.1;
-    // covar(0, 1) = 0.0;
-    // covar(1, 0) = 0.0;
-    // covar(1, 1) = 1.2;
-    // surf.setGauss(mean, covar);
-    // surf.Bang(1.5, 1.5);
-    // test code block ends
-
-    // actual code block for surf::Bang
-
-    // std::random_device rd;
-    // std::mt19937 gen(rd());
-    // std::normal_distribution<double> nd(0, 1);
-    // std::normal_distribution<double> nd_05(0, 0.01);
-    // std::normal_distribution<double> nd1(0, 0.1);
-    // std::normal_distribution<double> nd2(0, 0.2);
-    // std::normal_distribution<double> nd3(0, 0.3);
-    // std::normal_distribution<double> nd4(0, 0.4);
-    // std::normal_distribution<double> nd5(0, 0.5);
-    // std::normal_distribution<double> nd6(0, 0.6);
-    // std::normal_distribution<double> nd7(0, 0.7);
-    // std::normal_distribution<double> nd8(0, 0.8);
-    // std::normal_distribution<double> nd9(0, 0.9);
-    // std::uniform_real_distribution<double> nd_bx(12);
-    // std::uniform_real_distribution<double> nd_by(12);
-
-    // test code block for randon number generation
-    // std::map<int, int> hist{};
-    // for (int n = 0; n < 10000; ++n)
-    // {
-    //     ++hist[std::round(nd(gen))];
-    // }
-    // for (auto p : hist)
-    // {
-    //     std::cout << std::setw(2) << p.first << ' '
-    //               << std::string(p.second / 100, '*') << " " << p.second << '\n';
-    // }
-    // test code block ends
-
-    // for (int cnt = 0; cnt < 10000 / scale; cnt++)
-    // {
-    //     // std::cout << std::format("nd_cov(gen) = {:2}", std::abs(nd_cov(gen))) << std::endl;
-    //     // std::cout << std::format("nd_bx(gen) = {:2}", nd_bx(gen)-5) << std::endl;
-    //     // std::cout << std::format("nd_by(gen) = {:2}", nd_by(gen)-5) << std::endl;
-
-    //     if (cnt % 100 == 0)
-    //         // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
-    //         std::cout << std::format("\rcnt = {:5}%:", cnt / 100) << std::string(cnt / 100, '.') << std::flush;
-
-    //     covar(0, 0) = std::max(std::abs(nd_05(gen)), 0.01);
-    //     covar(1, 1) = 1 * covar(0, 0);
-
-    //     surf.setGauss(mean, covar);
-    //     if (nd(gen) > 0)
-    //         surf.Bang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-    //     else
-    //         surf.NegBang(std::round(10 * nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-    // }
-
-    // for (int cnt = 0; cnt < 200 / scale; cnt++)
-    // {
-    //     // std::cout << std::format("nd_cov(gen) = {:2}", std::abs(nd_cov(gen))) << std::endl;
-    //     // std::cout << std::format("nd_bx(gen) = {:2}", nd_bx(gen)-5) << std::endl;
-    //     // std::cout << std::format("nd_by(gen) = {:2}", nd_by(gen)-5) << std::endl;
-
-    //     if (cnt % 2 == 0)
-    //         // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
-    //         std::cout << std::format("\rcnt = {:5}%:", cnt / 2) << std::string(cnt / 2, '.') << std::flush;
-
-    //     covar(0, 0) = std::max(std::abs(_nd5(_gen)), 0.01);
-    //     covar(1, 1) = 2 * covar(0, 0);
-
-    //     surf.SetGauss(mean, covar);
-    //     if (_nd(_gen) > 0)
-    //         surf.Bang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
-    //     else
-    //         surf.NegBang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
-    // }
-
-    // std::cout << std::endl;
-
-    // for (int cnt = 0; cnt < 100 / scale; cnt++)
-    // {
-    //     covar(0, 0) = std::max(std::abs(nd8(gen)), 0.01);
-    //     covar(1, 1) = std::max(std::abs(nd8(gen)), 0.01);
-    //     surf.setGauss(mean, covar);
-    //     if (nd(gen) > 0)
-    //         surf.Bang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-    //     else
-    //         surf.NegBang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-    // }
-
-    // for (int cnt = 0; cnt < 100 / scale; cnt++)
-    // {
-    //     covar(0, 0) = std::max(std::abs(nd7(gen)), 0.01);
-    //     covar(1, 1) = std::max(std::abs(nd7(gen)), 0.01);
-    //     surf.setGauss(mean, covar);
-    //     if (nd(gen) > 0)
-    //         surf.Bang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-    //     else
-    //         surf.NegBang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-    // }
-
-    // for (int cnt = 0; cnt < 100 / scale; cnt++)
-    // {
-    //     covar(0, 0) = std::max(std::abs(nd6(gen)), 0.01);
-    //     covar(1, 1) = std::max(std::abs(nd6(gen)), 0.01);
-    //     surf.setGauss(mean, covar);
-    //     if (nd(gen) > 0)
-    //         surf.Bang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-    //     else
-    //         surf.NegBang(std::round(10 * _nd_bx(gen)) / 10.0 - 6, std::round(10 * nd_by(gen)) / 10.0 - 6);
-    // }
-
-    // surf.out();
-
-    // mesh rs;
-    // rs(1, 1) = 1;
-    // rs(99, 99) = 99.0;
-    // rs.update(surf);
-    // // rs.log();
-
-    // Initialization of raylib
-    //--------------------------------------------------------------------------------------
     int scale = 1;
+    if (argc == 2)
+    {
+        std::string fname = argv[1];
+        if (std::filesystem::exists(fname))
+        {
+            std::cout << "File exists" << std::endl;
+            std::ifstream fin(fname);
+            if (fin.fail())
+            {
+                std::cout << "File open failed" << std::endl;
+                exit(1);
+            }
+            std::string line;
+            std::getline(fin, line);
+            std::cout << line << std::endl;
+            fin.close();
+        }
+        else
+        {
+            std::cout << "File does not exist" << std::endl;
+            exit(1);
+        }
+    }
+    else if (argc > 2 || argc < 2)
+    {
+        std::cout << std::format("Usage: {} [filename]", argv[0]) << std::endl;
+        exit(1);
+    }
 
     MkDouble mean(2);
     MkMatrix<double> covar(2, 2);
@@ -475,16 +110,18 @@ int main(void)
 
     MkSurf surf;
     surf.Init();
-    surf.SetNumIter(20000);
-    surf.SetAniso(1);
-    surf.SetRange(-5.0, 5.0, -5.0, 5.0);
     surf.SetScale(scale);
     surf.SetAngle(0.0);
-    surf.GenSurf(_nd_05);
+    surf.SetRange(-5.0, 5.0, -5.0, 5.0);
+    // surf.SetNumIter(5000);
+    // surf.SetAniso(1);
+    // surf.GenSurf(_nd3);
     surf.SetNumIter(1000);
     surf.SetAniso(2);
-    surf.GenSurf(_nd2);
+    surf.GenSurf(_nd9);
 
+    // Initialization of raylib
+    //--------------------------------------------------------------------------------------
     const int screenWidth = 1000;
     const int screenHeight = 1000;
 
@@ -503,11 +140,6 @@ int main(void)
     Matrix trans = MatrixIdentity();
     Material material = LoadMaterialDefault();
 
-    // Mesh mesh, mesh2;
-    // UnloadMesh(mesh);
-    // mesh = genmesh(surf);
-    // mesh2 = genMeshTest();
-
     MkMesh mkmesh;
     mkmesh.Update(surf);
     Mesh &mesh = mkmesh.GetMesh();
@@ -525,59 +157,14 @@ int main(void)
 
         //----------------------------------------------------------------------------------
         BeginDrawing();
-
-        ClearBackground(BLACK);
-
-        BeginMode3D(camera);
-
-        DrawMesh(mesh, material, trans); // ***
-        // DrawMesh(mesh2, material, trans); // ***
-
-        // for (int i = 0; i < surf.getSurfData().getSzX() - 1; i++)
-        // {
-        //     for (int j = 0; j < surf.getSurfData().getSzY() - 1; j++)
-        //     {
-        //         // std::cout << std::format("({:3}, {:3} )", screenWidth * float(i) / 100.0f, screenWidth * float(i + 1) / 100.0f) << std::endl;
-        //         // DrawTriangle3D((Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j) / 100.0f, (float)surf(i, j)},
-        //         //                (Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surf(i, j + 1)},
-        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j) / 100.0f, (float)surf(i + 1, j)}, WHITE);
-        //         // DrawTriangle3D((Vector3){screenWidth * float(i) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surf(i, j + 1)},
-        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j + 1) / 100.0f, (float)surf(i + 1, j + 1)},
-        //         //                (Vector3){screenWidth * float(i + 1) / 100.0f, screenWidth * float(j) / 100.0f, (float)surf(i + 1, j)}, YELLOW);
-        //         DrawTriangle3D((Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i, j)},
-        //                        (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)},
-        //                        (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)}, YELLOW);
-        //         DrawTriangle3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)},
-        //                        (Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j + 1)},
-        //                        (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)}, YELLOW);
-        //         DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i, j)},
-        //                    (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)}, BLACK);
-        //         DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)},
-        //                    (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)}, BLACK);
-        //         DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)},
-        //                    (Vector3){float(i) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i, j)}, BLACK);
-        //         DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)},
-        //                    (Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j + 1)}, BLACK);
-        //         DrawLine3D((Vector3){float(i + 1) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j + 1)},
-        //                    (Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)}, BLACK);
-        //         DrawLine3D((Vector3){float(i) / 10.0f - 5.0f, float(j + 1) / 10.0f - 5.0f, 0.01f * (float)surf(i, j + 1)},
-        //                    (Vector3){float(i + 1) / 10.0f - 5.0f, float(j) / 10.0f - 5.0f, 0.01f * (float)surf(i + 1, j)}, BLACK);
-        //     }
-        //     // std::cout << std::endl;
-        // }
-
-        // DrawCube(targetPosition, 2.0f, 2.0f, -0.5f, RED);
-        // DrawCubeWires(targetPosition, 2.0f, 2.0f, -0.5f, MAROON);
-        // DrawGrid(5, 2.0f);
-
-        EndMode3D();
-
-        // DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
-        // // Triangle shapes and lines
-        // DrawTriangle((Vector2){screenWidth / 4.0f * 4.0f, 80.0f},
-        //              (Vector2){screenWidth / 4.0f * 4.0f - 60.0f, 150.0f},
-        //              (Vector2){screenWidth / 4.0f * 4.0f + 60.0f, 150.0f}, VIOLET);
-
+        {
+            ClearBackground(BLACK);
+            BeginMode3D(camera);
+            {
+                DrawMesh(mesh, material, trans); // ***
+            }
+            EndMode3D();
+        }
         EndDrawing();
     }
 
