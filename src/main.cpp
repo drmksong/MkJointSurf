@@ -68,6 +68,19 @@
 int main(int argc, char **argv)
 {
     int scale = 1;
+    double numiter=10000, aniso=1, angle=0.0;
+    int nd=1;
+    std::vector<std::normal_distribution<double>> vnd;
+    vnd.push_back(_nd);
+    vnd.push_back(_nd1);
+    vnd.push_back(_nd2);
+    vnd.push_back(_nd3);
+    vnd.push_back(_nd4);
+    vnd.push_back(_nd5);
+    vnd.push_back(_nd6);
+    vnd.push_back(_nd7);
+    vnd.push_back(_nd8);
+    vnd.push_back(_nd9);
     if (argc == 2)
     {
         std::string fname = argv[1];
@@ -90,7 +103,16 @@ int main(int argc, char **argv)
                 std::cout << errs << std::endl;
                 return EXIT_FAILURE;
             }
-            std::cout << std::format("root[key] is {}",root["key"].asString()) << std::endl;
+
+            std::cout << std::format("root[NumIter] is {}",root["NumIter"].asDouble()) << std::endl;
+            std::cout << std::format("root[Aniso] is {}",root["Aniso"].asDouble()) << std::endl;
+            std::cout << std::format("root[ND] is {}",root["ND"].asInt()) << std::endl;
+            std::cout << std::format("root[Angle] is {}",root["Angle"].asInt()) << std::endl;
+
+            numiter = root["NumIter"].asDouble();
+            aniso = root["Aniso"].asDouble();
+            nd = root["ND"].asInt();
+            angle = root["Angle"].asDouble();
             // return EXIT_SUCCESS;
 
             fin.close();
@@ -121,14 +143,14 @@ int main(int argc, char **argv)
     MkSurf surf;
     surf.Init();
     surf.SetScale(scale);
-    surf.SetAngle(0.0);
     surf.SetRange(-5.0, 5.0, -5.0, 5.0);
     // surf.SetNumIter(5000);
     // surf.SetAniso(1);
     // surf.GenSurf(_nd3);
-    surf.SetNumIter(1000);
-    surf.SetAniso(2);
-    surf.GenSurf(_nd9);
+    surf.SetNumIter(numiter);
+    surf.SetAniso(aniso);
+    surf.SetAngle(angle);
+    surf.GenSurf(vnd[nd]);
 
     // Initialization of raylib
     //--------------------------------------------------------------------------------------
@@ -138,7 +160,7 @@ int main(int argc, char **argv)
     InitWindow(screenWidth, screenHeight, "Rock Surface");
 
     Camera3D camera = {0};
-    camera.position = (Vector3){0.0f, 0.01f, 5.0f}; // Camera position
+    camera.position = (Vector3){0.0f, 10.01f, 5.0f}; // Camera position
     camera.target = (Vector3){0.0f, 0.0f, 0.0f};    // Camera looking at point
     camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
     camera.fovy = 90.0f;                            // Camera field-of-view Y
