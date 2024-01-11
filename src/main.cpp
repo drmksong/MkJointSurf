@@ -75,14 +75,24 @@ int main(int argc, char **argv)
         {
             std::cout << "File exists" << std::endl;
             std::ifstream fin(fname);
+            Json::Value root;
             if (fin.fail())
             {
                 std::cout << "File open failed" << std::endl;
                 exit(1);
             }
-            std::string line;
-            std::getline(fin, line);
-            std::cout << line << std::endl;
+
+            Json::CharReaderBuilder builder;
+            builder["collectComments"] = true;
+            JSONCPP_STRING errs;
+            if (!parseFromStream(builder, fin, &root, &errs))
+            {
+                std::cout << errs << std::endl;
+                return EXIT_FAILURE;
+            }
+            std::cout << std::format("root[key] is {}",root["key"].asString()) << std::endl;
+            // return EXIT_SUCCESS;
+
             fin.close();
         }
         else

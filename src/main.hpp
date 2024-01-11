@@ -8,6 +8,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <MkArray.hpp>
+#include <json/json.h>
 #include "MkMesh.hpp"
 #include "MkSurf.hpp"
 #include "MkGauss.hpp"
