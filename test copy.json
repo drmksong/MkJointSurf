@@ -1,0 +1,11 @@
+{
+    "data": [
+        {
+            "key": "value",
+            "NumIter": 10000,
+            "Aniso": 5,
+            "ND": 3,
+            "Angle": 0
+        }
+    ]
+}

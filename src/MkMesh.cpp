@@ -87,7 +87,7 @@ void MkMesh::SetupMesh()
             nCounter += 3;
 
             meshData.colors[cCounter + 0] = int((surf_(i, j) - minValue) / (maxValue - minValue) * 255);
-            meshData.colors[cCounter + 1] = 125;
+            meshData.colors[cCounter + 1] = 0;
             meshData.colors[cCounter + 2] = int((maxValue - surf_(i, j)) / (maxValue - minValue) * 255);
             meshData.colors[cCounter + 3] = 255;
             cCounter += 4;

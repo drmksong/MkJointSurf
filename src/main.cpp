@@ -68,8 +68,10 @@
 int main(int argc, char **argv)
 {
     int scale = 1;
-    double numiter=10000, aniso=1, angle=0.0;
-    int nd=1;
+    // double numiter[2] = {10000, 1000}, aniso[2] = {1, 4}, angle[2] = {0.0, 30};
+    // int nd[2] = {1, 8};
+    std::vector<double> numiter, aniso, angle;
+    std::vector<int> nd;
     std::vector<std::normal_distribution<double>> vnd;
     vnd.push_back(_nd);
     vnd.push_back(_nd1);
@@ -104,16 +106,24 @@ int main(int argc, char **argv)
                 return EXIT_FAILURE;
             }
 
-            std::cout << std::format("root[NumIter] is {}",root["NumIter"].asDouble()) << std::endl;
-            std::cout << std::format("root[Aniso] is {}",root["Aniso"].asDouble()) << std::endl;
-            std::cout << std::format("root[ND] is {}",root["ND"].asInt()) << std::endl;
-            std::cout << std::format("root[Angle] is {}",root["Angle"].asInt()) << std::endl;
+            const Json::Value &data = root["data"];
+            for (int i = 0; i < data.size(); i++)
+            {
+                numiter.push_back(data[i]["NumIter"].asDouble());
+                aniso.push_back(data[i]["Aniso"].asDouble());
+                nd.push_back(data[i]["ND"].asInt());
+                angle.push_back(-data[i]["Angle"].asDouble());
+            }
+            // std::cout << std::format("root[NumIter] is {}", root["NumIter"].asDouble()) << std::endl;
+            // std::cout << std::format("root[Aniso] is {}", root["Aniso"].asDouble()) << std::endl;
+            // std::cout << std::format("root[ND] is {}", root["ND"].asInt()) << std::endl;
+            // std::cout << std::format("root[Angle] is {}", root["Angle"].asInt()) << std::endl;
 
-            numiter = root["NumIter"].asDouble();
-            aniso = root["Aniso"].asDouble();
-            nd = root["ND"].asInt();
-            angle = -root["Angle"].asDouble();
-            // return EXIT_SUCCESS;
+            // numiter = root["NumIter"].asDouble();
+            // aniso = root["Aniso"].asDouble();
+            // nd = root["ND"].asInt();
+            // angle = -root["Angle"].asDouble();
+            // // return EXIT_SUCCESS;
 
             fin.close();
         }
@@ -129,13 +139,13 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    MkDouble mean(2),stdev(2);
+    MkDouble mean(2), stdev(2);
 
     mean(0) = 0.0;
     mean(1) = 0.0;
 
     stdev(0) = 1.0;
-    stdev(1)=1.0;
+    stdev(1) = 1.0;
 
     MkSurf surf;
     surf.Init();
@@ -144,10 +154,22 @@ int main(int argc, char **argv)
     // surf.SetNumIter(5000);
     // surf.SetAniso(1);
     // surf.GenSurf(_nd3);
-    surf.SetNumIter(numiter);
-    surf.SetAniso(aniso);
-    surf.SetAngle(angle);
-    surf.GenSurf(vnd[nd]);
+    for (int i = 0; i < numiter.size(); i++)
+    {
+        std::cout << std::format("numiter[{}] is {} ", i, numiter[i]) << std::endl;
+        std::cout << std::format("aniso[{}] is {} ", i, aniso[i]) << std::endl;
+        std::cout << std::format("nd[{}] is {} ", i, nd[i]) << std::endl;
+        std::cout << std::format("angle[{}] is {} ", i, -angle[i]) << std::endl;
+
+        surf.SetNumIter(numiter[i]);
+        surf.SetAniso(aniso[i]);
+        surf.SetAngle(angle[i]);
+        surf.GenSurf(vnd[nd[i]]);
+    }
+    // surf.SetNumIter(numiter);
+    // surf.SetAniso(aniso);
+    // surf.SetAngle(angle);
+    // surf.GenSurf(vnd[nd]);
 
     // Initialization of raylib
     //--------------------------------------------------------------------------------------
