@@ -112,7 +112,7 @@ int main(int argc, char **argv)
             numiter = root["NumIter"].asDouble();
             aniso = root["Aniso"].asDouble();
             nd = root["ND"].asInt();
-            angle = root["Angle"].asDouble();
+            angle = -root["Angle"].asDouble();
             // return EXIT_SUCCESS;
 
             fin.close();
@@ -129,16 +129,13 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    MkDouble mean(2);
-    MkMatrix<double> covar(2, 2);
+    MkDouble mean(2),stdev(2);
 
     mean(0) = 0.0;
     mean(1) = 0.0;
 
-    covar(0, 0) = 0.1;
-    covar(0, 1) = 0.0;
-    covar(1, 0) = 0.0;
-    covar(1, 1) = 0.1;
+    stdev(0) = 1.0;
+    stdev(1)=1.0;
 
     MkSurf surf;
     surf.Init();
@@ -160,7 +157,7 @@ int main(int argc, char **argv)
     InitWindow(screenWidth, screenHeight, "Rock Surface");
 
     Camera3D camera = {0};
-    camera.position = (Vector3){0.0f, 10.01f, 5.0f}; // Camera position
+    camera.position = (Vector3){0.01f, 0.0f, 5.0f}; // Camera position
     camera.target = (Vector3){0.0f, 0.0f, 0.0f};    // Camera looking at point
     camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
     camera.fovy = 90.0f;                            // Camera field-of-view Y

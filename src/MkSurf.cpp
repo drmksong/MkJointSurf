@@ -20,17 +20,15 @@ void MkSurf::Init()
     this->surfData.Initialize(100, 100);
 
     MkDouble mean(2);
-    MkMatrix<double> covar(2, 2);
+    MkDouble stdev(2);
 
     mean(0) = 0.0;
     mean(1) = 0.0;
 
-    covar(0, 0) = 1.0;
-    covar(0, 1) = 0.0;
-    covar(1, 0) = 0.0;
-    covar(1, 1) = 1.0;
+    stdev(0) = 1.0;
+    stdev(1) = 1.0;
 
-    this->gaussDist.Init(mean, covar);
+    this->gaussDist.Init(mean, stdev);
 }
 
 void MkSurf::Bang(double cx, double cy)
@@ -42,8 +40,14 @@ void MkSurf::Bang(double cx, double cy)
             // std::cout << std::format("Bang::i = {:3} j = {:3}", i, j) << std::endl;
             float x = (float)i / 100.0 * (this->xMax - this->xMin) + this->xMin;
             float y = (float)j / 100.0 * (this->yMax - this->yMin) + this->yMin;
-            // float xt = (x - cx) * cos(this->Angle) - (y - cy) * sin(this->Angle)+cx;
-            // float yt = (x - cx) * sin(this->Angle) + (y - cy) * cos(this->Angle)+cy;
+
+            // float xt = (x - cx) * cos(this->Angle) - (y - cy) * sin(this->Angle) + cx;
+            // float yt = (x - cx) * sin(this->Angle) + (y - cy) * cos(this->Angle) + cy;
+
+            // int ii = (int)((x - this->xMin) / (this->xMax - this->xMin) * 100 + 0.5);
+            // int jj = (int)((y - this->yMin) / (this->yMax - this->yMin) * 100 + 0.5);
+            // std::cout << std::format("Bang::x{},xt{},y{},yt{},i = {:3}, ii = {}, j = {:3} jj = {}", x, xt, y, yt, i, ii, j, jj) << std::endl;
+
             float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
             if (dis > 3 * dev)
                 continue;
@@ -64,8 +68,13 @@ void MkSurf::NegBang(double cx, double cy)
             // std::cout << std::format("NegBang::i = {:3} j = {:3}", i, j) << std::endl;
             float x = (float)i / 100.0 * (this->xMax - this->xMin) + this->xMin;
             float y = (float)j / 100.0 * (this->yMax - this->yMin) + this->yMin;
-            // float xt = (x - cx) * cos(this->Angle) - (y - cy) * sin(this->Angle)+cx;
-            // float yt = (x - cx) * sin(this->Angle) + (y - cy) * cos(this->Angle)+cy;
+
+            // float xt = (x - cx) * cos(this->Angle) - (y - cy) * sin(this->Angle) + cx;
+            // float yt = (x - cx) * sin(this->Angle) + (y - cy) * cos(this->Angle) + cy;
+
+            // int ii = (int)((x - this->xMin) / (this->xMax - this->xMin) * 100 + 0.5);
+            // int jj = (int)((y - this->yMin) / (this->yMax - this->yMin) * 100 + 0.5);
+            // std::cout << std::format("NegBang::x{},xt{},y{},yt{},i = {:3}, ii = {}, j = {:3} jj = {}", x, xt, y, yt, i, ii, j, jj) << std::endl;
 
             float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
             if (dis > 3 * dev)
@@ -82,8 +91,8 @@ void MkSurf::GenSurf(std::normal_distribution<double> &nd)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
-    MkDouble &mean = this->gaussDist.GetMean();
-    MkMatrix<double> covar(2, 2), covar1(2, 2);
+    MkDouble stdev(2);
+
     int N = NumIter, N1 = N / 100;
 
     for (int cnt = 0; cnt < N; cnt++)
@@ -92,17 +101,17 @@ void MkSurf::GenSurf(std::normal_distribution<double> &nd)
         // std::cout << std::format("nd_bx(gen) = {:2}", nd_bx(gen)-5) << std::endl;
         // std::cout << std::format("nd_by(gen) = {:2}", nd_by(gen)-5) << std::endl;
 
-        if (cnt % (N1) == 0)
+        if (N1 != 0 && cnt % (N1) == 0)
             // std::cout << std::format("\rcnt = {:5}%", cnt / 100) << std::flush;
             std::cout << std::format("\rcnt = {:5}%:", cnt / N1) << std::string(cnt / N1, '.') << std::flush;
 
-        covar(0, 1) = covar(1, 0) = 0;
-        covar(0, 0) = std::max(std::abs(nd(gen)), 0.01);
-        covar(1, 1) = Aniso * covar(0, 0);
-        
+        stdev(0) = std::max(std::abs(nd(gen)), 0.01);
+        stdev(1) = Aniso * stdev(0);
+
         // std::cout << std::format("covar(0,0) = {:3} covar1(0,0) = {:3}", covar(0,0), covar1(0,0)) << std::endl;
 
-        SetGauss(mean, covar);
+        this->gaussDist.SetStdDev(stdev);
+        
         if (_nd(_gen) > 0)
             Bang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
         else
@@ -121,7 +130,6 @@ void MkSurf::Log()
 
 void MkSurf::Out() // formatted screen out
 {
-
     for (int j = 0; j < 100; j++)
     {
         std::cout << std::setw(3) << j << " ";
@@ -137,7 +145,7 @@ void MkSurf::Out() // formatted screen out
 
 double &MkSurf::operator()(int i, int j)
 {
-    return this->surfData(i, j); 
+    return this->surfData(i, j);
 }
 
 double &MkSurf::operator()(float x, float y)
@@ -146,14 +154,15 @@ double &MkSurf::operator()(float x, float y)
 
     int i = (int)((x - this->xMin) / (this->xMax - this->xMin) * 100);
     int j = (int)((y - this->yMin) / (this->yMax - this->yMin) * 100);
-    
+
     // std::cout << std::format("i = {:3} j = {:3}", i, j) << std::endl;
 
-    if (0 <= i && i < 100 && 0 <= j && j < 100) {
+    if (0 <= i && i < 100 && 0 <= j && j < 100)
+    {
         // std::cout << std::format("inside loop, i = {:3} j = {:3}", i, j) << std::endl;
         return this->surfData(i, j);
     }
-        
+
     else
         return zero; // out of range, return zero value to invalidate the updating of mesh
 }

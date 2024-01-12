@@ -15,14 +15,14 @@ public:
     MkSurf();
     ~MkSurf();
     void Init();
-    void Init(MkDouble &Mean, MkMatrix<double> &Covar)
+    void Init(MkDouble &Mean, MkDouble &StdDev)
     {
-        this->gaussDist.Init(Mean, Covar);
+        this->gaussDist.Init(Mean, StdDev);
     }
 
-    void SetGauss(MkDouble &Mean, MkMatrix<double> &Covar)
+    void SetGauss(MkDouble &Mean, MkDouble &StdDev)
     {
-        this->gaussDist.Init(Mean, Covar);
+        this->gaussDist.Init(Mean, StdDev);
     }
 
     void SetRange(float xMin, float xMax, float yMin, float yMax)
@@ -51,6 +51,7 @@ public:
     void SetAngle(float angle)
     {
         this->Angle = angle * M_PI / 180.0;
+        this->gaussDist.SetAngle(angle);
     }
 
     MkDouble &GetSurfData()
