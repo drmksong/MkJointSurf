@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <random>
 #include <raylib.h>
+#include <rlgl.h>
 #include <raymath.h>
 #include <MkArray.hpp>
 #include <json/json.h>

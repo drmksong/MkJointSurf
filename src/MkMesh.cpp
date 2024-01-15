@@ -74,7 +74,7 @@ void MkMesh::SetupMesh()
         {
             meshData.vertices[vCounter] = (float)(i - 50) / 10.0f;
             meshData.vertices[vCounter + 1] = (float)(j - 50) / 10.0f;
-            meshData.vertices[vCounter + 2] = (float)surf_(i, j) / 50.0f;
+            meshData.vertices[vCounter + 2] = 0;//(float)surf_(i, j) / 50.0f;
             vCounter += 3;
 
             meshData.texcoords[tcCounter] = (float)i / 100.0f;

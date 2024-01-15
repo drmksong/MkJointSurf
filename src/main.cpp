@@ -175,6 +175,8 @@ int main(int argc, char **argv)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 1000;
     const int screenHeight = 1000;
+    std::string fname = "rock";
+    int batch = 1;
 
     InitWindow(screenWidth, screenHeight, "Rock Surface");
 
@@ -205,6 +207,11 @@ int main(int argc, char **argv)
         UpdateCamera(&camera, CAMERA_FREE);
         if (IsKeyPressed('Z'))
             camera.target = (Vector3){0.0f, 0.0f, 0.0f};
+        if (IsKeyPressed('C'))
+        {
+            TakeScreenshot(std::format("{}_{:03}.png", fname, batch).c_str());
+            batch++;
+        }
 
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -221,7 +228,7 @@ int main(int argc, char **argv)
 
     //----------------------------------------------------------------------------------
 
-    // De-Initialization
+    // // De-Initialization
     //--------------------------------------------------------------------------------------
     CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
