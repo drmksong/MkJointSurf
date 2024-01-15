@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <format>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <random>
 #include <MkArray.hpp>
@@ -70,6 +71,31 @@ public:
     double &operator()(float x, float y);
     void Test();
 
+    friend std::ofstream &operator<<(std::ofstream &fs, MkSurf &surf)
+    {
+        fs << std::to_string(surf.surfData.getSzX()) << " " << std::to_string(surf.surfData.getSzY()) << std::endl;
+        for (int i = 0; i < surf.surfData.getSzX(); i++)
+        {
+            for (int j = 0; j < surf.surfData.getSzY(); j++)
+            {
+                fs << std::to_string(surf.surfData(i, j)) << ", ";
+            }
+            fs << std::endl;
+        }
+
+        for (int i = 0; i < surf.surfData.getSzX(); i++)
+        {
+            fs << std::to_string(surf.X(i)) << ", " << std::endl;
+        }
+
+        for (int j = 0; j < surf.surfData.getSzY(); j++)
+        {
+            fs << std::to_string(surf.Y(j)) << ", " << std::endl;
+        }
+
+        return fs;
+    }
+
     MkSurf &operator=(MkSurf &surf)
     {
         this->surfData = surf.surfData;
@@ -98,6 +124,16 @@ public:
         this->Aniso = surf.Aniso;
         this->Angle = surf.Angle;
         return *this;
+    }
+
+    float X(int i)
+    {
+        return (float)i / (float)(surfData.getSzX() - 1) * (xMax - xMin) + xMin;
+    }
+
+    float Y(int j)
+    {
+        return (float)j / (float)(surfData.getSzY() - 1) * (yMax - yMin) + yMin;
     }
 
 private:

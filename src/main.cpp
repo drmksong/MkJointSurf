@@ -83,6 +83,9 @@ int main(int argc, char **argv)
     vnd.push_back(_nd7);
     vnd.push_back(_nd8);
     vnd.push_back(_nd9);
+    std::string fname = "";
+    int batch_num = 0;
+
     if (argc == 2)
     {
         std::string fname = argv[1];
@@ -114,6 +117,11 @@ int main(int argc, char **argv)
                 nd.push_back(data[i]["ND"].asInt());
                 angle.push_back(-data[i]["Angle"].asDouble());
             }
+            const Json::Value &norm = root["Norm"];
+            const Json::Value &imag = root["Image"];
+            const Json::Value &batch = root["Batch"];
+            fname = norm.asString();
+            batch_num = batch.asInt();
             // std::cout << std::format("root[NumIter] is {}", root["NumIter"].asDouble()) << std::endl;
             // std::cout << std::format("root[Aniso] is {}", root["Aniso"].asDouble()) << std::endl;
             // std::cout << std::format("root[ND] is {}", root["ND"].asInt()) << std::endl;
@@ -175,8 +183,6 @@ int main(int argc, char **argv)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 1000;
     const int screenHeight = 1000;
-    std::string fname = "rock";
-    int batch = 1;
 
     InitWindow(screenWidth, screenHeight, "Rock Surface");
 
@@ -209,8 +215,13 @@ int main(int argc, char **argv)
             camera.target = (Vector3){0.0f, 0.0f, 0.0f};
         if (IsKeyPressed('C'))
         {
-            TakeScreenshot(std::format("{}_{:03}.png", fname, batch).c_str());
-            batch++;
+            TakeScreenshot(std::format("{}_{:03}.png", fname, batch_num).c_str());
+        }
+        if (IsKeyPressed('V'))
+        {
+            std::ofstream fout(std::format("{}_{:03}.dat", fname, batch_num));
+            fout << surf;
+            fout.close();
         }
 
         //----------------------------------------------------------------------------------

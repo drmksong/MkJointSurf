@@ -1,0 +1,21 @@
+# MkJointSurf
+
+MkJointSurf is a library that provides tools for joint surface analysis in robotics applications.
+
+## Features
+
+- Calculate joint surface parameters such as contact area, pressure distribution, and friction coefficients.
+- Support for various joint types including revolute, prismatic, and spherical joints.
+- Easy integration with existing robotics frameworks and simulation environments.
+
+## Installation
+
+To install MkJointSurf, follow these steps:
+
+1. Clone the repository: `git clone https://github.com/mksong/mkjointsurf.git`
+2. Build the library: `cd mkjointsurf && make`
+3. Install the library: `make install`
+
+## Usage
+
+To use MkJointSurf in your project, include the necessary header files and link against the library. Here's an example:
