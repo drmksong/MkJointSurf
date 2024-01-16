@@ -37,6 +37,8 @@ public:
     void SetScale(float scale)
     {
         this->scale = scale;
+        // TODO: implement Scale()
+
     }
 
     void SetNumIter(int numiter)
@@ -65,6 +67,7 @@ public:
 
     void GenSurf(std::normal_distribution<double> &);
 
+    void Rescale(); // TODO: implement Rescale(), reset the maximum value to scale. It is not much appropriate to use term "rescale" here.
     void Log();
     void Out();
     double &operator()(int i, int j);
@@ -108,6 +111,7 @@ public:
         this->NumIter = surf.NumIter;
         this->Aniso = surf.Aniso;
         this->Angle = surf.Angle;
+        this->isScaled = surf.isScaled;
         return *this;
     }
 
@@ -123,6 +127,7 @@ public:
         this->NumIter = surf.NumIter;
         this->Aniso = surf.Aniso;
         this->Angle = surf.Angle;
+        this->isScaled = surf.isScaled;
         return *this;
     }
 
@@ -144,4 +149,5 @@ private:
     int NumIter;
     float Aniso;
     float Angle;
+    bool isScaled;
 };

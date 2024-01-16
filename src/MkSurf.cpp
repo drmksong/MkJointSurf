@@ -11,7 +11,6 @@ MkSurf::~MkSurf()
 
 void MkSurf::Init()
 {
-    scale = 1;
     xMin = -1;
     xMax = 1;
     yMin = -1;
@@ -29,10 +28,17 @@ void MkSurf::Init()
     stdev(1) = 1.0;
 
     this->gaussDist.Init(mean, stdev);
+
+    scale = 1;
+    NumIter = 1;
+    Aniso = 1;
+    Angle = 0;
+    isScaled = false;
 }
 
 void MkSurf::Bang(double cx, double cy)
 {
+    isScaled = false;
     float dev = std::max(this->gaussDist.GetCovar()(0, 0), this->gaussDist.GetCovar()(1, 1));
     for (int i = 0; i < 100; i++)
         for (int j = 0; j < 100; j++)
@@ -51,7 +57,7 @@ void MkSurf::Bang(double cx, double cy)
             float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
             if (dis > 3 * dev)
                 continue;
-            double z = this->scale * this->gaussDist.ScaledEval(x - cx, y - cy);
+            double z = this->gaussDist.ScaledEval(x - cx, y - cy);
             // std::cout << std::format("Bang::xt = {:3} yt = {:3} z = {:3}", xt, yt, z) << std::endl;
             this->surfData(i, j) += z;
             // (*this)(xt, yt) += z;
@@ -61,6 +67,7 @@ void MkSurf::Bang(double cx, double cy)
 
 void MkSurf::NegBang(double cx, double cy)
 {
+    isScaled = false;
     float dev = std::max(this->gaussDist.GetCovar()(0, 0), this->gaussDist.GetCovar()(1, 1));
     for (int i = 0; i < 100; i++)
         for (int j = 0; j < 100; j++)
@@ -79,7 +86,7 @@ void MkSurf::NegBang(double cx, double cy)
             float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
             if (dis > 3 * dev)
                 continue;
-            double z = this->scale * this->gaussDist.ScaledEval(x - cx, y - cy);
+            double z = this->gaussDist.ScaledEval(x - cx, y - cy);
             this->surfData(i, j) -= z;
             // std::cout << std::format("NegBang::xt = {:3} yt = {:3} z = {:3}", xt, yt, z) << std::endl;
             // (*this)(xt, yt) -= z;
@@ -93,6 +100,7 @@ void MkSurf::GenSurf(std::normal_distribution<double> &nd)
     std::mt19937 gen(rd());
     MkDouble stdev(2);
 
+    isScaled = false;
     int N = NumIter, N1 = N / 100;
 
     for (int cnt = 0; cnt < N; cnt++)
@@ -111,13 +119,47 @@ void MkSurf::GenSurf(std::normal_distribution<double> &nd)
         // std::cout << std::format("covar(0,0) = {:3} covar1(0,0) = {:3}", covar(0,0), covar1(0,0)) << std::endl;
 
         this->gaussDist.SetStdDev(stdev);
-        
+
         if (_nd(_gen) > 0)
             Bang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
         else
             NegBang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
     }
     std::cout << std::endl;
+}
+
+void MkSurf::Rescale()
+{
+    double maxV = -1e10, minV = 1e10;
+    double factor = 1;
+    if (isScaled == false)
+    {
+        isScaled = true;
+        for (int i = 0; i < 100; i++)
+        {
+            for (int j = 0; j < 100; j++)
+            {
+                if (surfData(i, j) > maxV)
+                    maxV = surfData(i, j);
+                if (surfData(i, j) < minV)
+                    minV = surfData(i, j);
+            }
+        }
+        if (std::abs(maxV - minV) < 1e-3)
+            return;
+        else
+        {
+            factor = scale / (maxV - minV);
+            for (int i = 0; i < 100; i++)
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    if (surfData(i, j) < minV)
+                        surfData(i, j) *= factor;
+                }
+            }
+        }
+    }
 }
 
 void MkSurf::Log()

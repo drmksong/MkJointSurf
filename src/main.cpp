@@ -117,10 +117,11 @@ int main(int argc, char **argv)
                 nd.push_back(data[i]["ND"].asInt());
                 angle.push_back(-data[i]["Angle"].asDouble());
             }
-            const Json::Value &norm = root["Norm"];
+            const Json::Value &scale_ = root["Scale"];
             const Json::Value &imag = root["Image"];
             const Json::Value &batch = root["Batch"];
-            fname = norm.asString();
+            scale = scale_.asInt();
+            fname = imag.asString();
             batch_num = batch.asInt();
             // std::cout << std::format("root[NumIter] is {}", root["NumIter"].asDouble()) << std::endl;
             // std::cout << std::format("root[Aniso] is {}", root["Aniso"].asDouble()) << std::endl;

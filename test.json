@@ -21,7 +21,7 @@
             "Angle": 60
         }
     ],
-    "Norm": 3.0,
+    "Scale": 3.0,
     "Image": "rock",
     "Batch": 1
 }
