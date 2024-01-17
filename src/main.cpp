@@ -67,7 +67,6 @@
 
 int main(int argc, char **argv)
 {
-    int scale = 1;
     // double numiter[2] = {10000, 1000}, aniso[2] = {1, 4}, angle[2] = {0.0, 30};
     // int nd[2] = {1, 8};
     std::vector<double> numiter, aniso, angle;
@@ -85,6 +84,7 @@ int main(int argc, char **argv)
     vnd.push_back(_nd9);
     std::string fname = "";
     int batch_num = 0;
+    float scale = 1;
 
     if (argc == 2)
     {
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
             const Json::Value &scale_ = root["Scale"];
             const Json::Value &imag = root["Image"];
             const Json::Value &batch = root["Batch"];
-            scale = scale_.asInt();
+            scale = scale_.asFloat();
             fname = imag.asString();
             batch_num = batch.asInt();
             // std::cout << std::format("root[NumIter] is {}", root["NumIter"].asDouble()) << std::endl;
@@ -157,8 +157,8 @@ int main(int argc, char **argv)
     stdev(1) = 1.0;
 
     MkSurf surf;
+
     surf.Init();
-    surf.SetScale(scale);
     surf.SetRange(-5.0, 5.0, -5.0, 5.0);
     // surf.SetNumIter(5000);
     // surf.SetAniso(1);
@@ -175,6 +175,10 @@ int main(int argc, char **argv)
         surf.SetAngle(angle[i]);
         surf.GenSurf(vnd[nd[i]]);
     }
+    surf.SetScale(scale);
+    std::cout << std::format("scale is {}", scale) << std::endl;
+
+    surf.Rescale();
     // surf.SetNumIter(numiter);
     // surf.SetAniso(aniso);
     // surf.SetAngle(angle);
@@ -213,7 +217,12 @@ int main(int argc, char **argv)
       // Update
         UpdateCamera(&camera, CAMERA_FREE);
         if (IsKeyPressed('Z'))
+        {
             camera.target = (Vector3){0.0f, 0.0f, 0.0f};
+            camera.position = (Vector3){0.01f, 0.0f, 5.0f}; // Camera position
+            camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
+        }
+
         if (IsKeyPressed('C'))
         {
             TakeScreenshot(std::format("{}_{:03}.png", fname, batch_num).c_str());
@@ -224,6 +233,21 @@ int main(int argc, char **argv)
             fout << surf;
             fout.close();
         }
+
+        UpdateCameraPro(&camera,
+                        (Vector3){
+                            (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) * 0.1f - // Move forward-backward
+                                (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * 0.1f,
+                            (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) * 0.1f - // Move right-left
+                                (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) * 0.1f,
+                            0.0f // Move up-down
+                        },
+                        (Vector3){
+                            GetMouseDelta().x * 0.05f, // Rotation: yaw
+                            GetMouseDelta().y * 0.05f, // Rotation: pitch
+                            0.0f                       // Rotation: roll
+                        },
+                        GetMouseWheelMove() * 2.0f);
 
         //----------------------------------------------------------------------------------
         BeginDrawing();

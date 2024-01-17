@@ -139,23 +139,22 @@ void MkSurf::Rescale()
         {
             for (int j = 0; j < 100; j++)
             {
-                if (surfData(i, j) > maxV)
-                    maxV = surfData(i, j);
-                if (surfData(i, j) < minV)
-                    minV = surfData(i, j);
+                maxV = std::max(surfData(i, j), maxV);
+                minV = std::min(surfData(i, j), minV);
             }
         }
+        std::cout << std::format("maxV = {:3} minV = {:3}", maxV, minV) << std::endl;
         if (std::abs(maxV - minV) < 1e-3)
             return;
         else
         {
             factor = scale / (maxV - minV);
+            std::cout << std::format("factor = {:3}", factor) << std::endl;
             for (int i = 0; i < 100; i++)
             {
                 for (int j = 0; j < 100; j++)
                 {
-                    if (surfData(i, j) < minV)
-                        surfData(i, j) *= factor;
+                    surfData(i, j) *= factor;
                 }
             }
         }
