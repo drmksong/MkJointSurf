@@ -110,7 +110,7 @@ int main(int argc, char **argv)
             }
 
             const Json::Value &data = root["data"];
-            for (int i = 0; i < data.size(); i++)
+            for (Json::Value::ArrayIndex i = 0; i < data.size(); i++)
             {
                 numiter.push_back(data[i]["NumIter"].asDouble());
                 aniso.push_back(data[i]["Aniso"].asDouble());
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
     // surf.SetNumIter(5000);
     // surf.SetAniso(1);
     // surf.GenSurf(_nd3);
-    for (int i = 0; i < numiter.size(); i++)
+    for (std::vector<double>::size_type i = 0; i < numiter.size(); i++)
     {
         std::cout << std::format("numiter[{}] is {} ", i, numiter[i]) << std::endl;
         std::cout << std::format("aniso[{}] is {} ", i, aniso[i]) << std::endl;
@@ -264,7 +264,7 @@ int main(int argc, char **argv)
 
     //----------------------------------------------------------------------------------
 
-    // // De-Initialization
+    // De-Initialization
     //--------------------------------------------------------------------------------------
     CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
