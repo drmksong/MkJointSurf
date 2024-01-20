@@ -8,6 +8,57 @@ MkJointSurf is a library that provides tools for joint surface analysis in robot
 - Support for various joint types including revolute, prismatic, and spherical joints.
 - Easy integration with existing robotics frameworks and simulation environments.
 
+## Prerequists
+
+1. wsl (refer to https://learn.microsoft.com/en-us/windows/wsl/setup/environment)
+    - in powershell command key in the followings,
+    - wsl --install
+    - sudo apt update && sudo ap upgrade
+
+
+2. linux 
+    - there are many linux distros and if Ubuntu is your choice, you can refer to https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview
+
+
+3. Development essentials
+    - you can install build-essential by type in the following,
+    - sudo apt-get install build-essential git cmake
+출처: https://conservative-vector.tistory.com/entry/Ubuntu-Install 
+
+## Necessary Libraries
+
+1. Boost c++ library 
+    - you can install Boost c++ library by typing in the following,
+    - sudo apt-get install build-essential g++ python3-dev autotools-dev libicu-dev libbz2-dev libboost-all-dev
+
+2. glfw library
+    - you can install glfw library by typing in the following, 
+    - sudo apt-get install libglfw3-dev libglfw3
+
+3. jsoncpp library
+    - you can install jsoncpp library by typing in the following,
+    - sudo apt-get install libjsoncpp-dev
+
+4. raylib library
+    - you need to install necessary libraries by typing in the following,
+    - sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev
+    - then download raylib source files by typing in the followings,
+    - git clone https://github.com/raysan5/raylib.git raylib
+    - mkdir raylib/build
+    - cd raylib/build
+    - cmake ..
+    - sudo make install
+    - sudo ldconfig
+    
+5. MkLib library
+    - download MkLib source files by typing in the followings,
+    - git clone https://github.com/drmksong/MkLib.git MkLib
+    - mkdir MkLib/build
+    - cd MkDir/build
+    - cmake ..
+    - sudo make install
+    - sudo ldconfig
+
 ## Installation
 
 To install MkJointSurf, follow these steps:

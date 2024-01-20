@@ -156,6 +156,26 @@ int main(int argc, char **argv)
     stdev(0) = 1.0;
     stdev(1) = 1.0;
 
+    // Initialization of raylib
+    //--------------------------------------------------------------------------------------
+    const int screenWidth = 1000;
+    const int screenHeight = 1000;
+
+    InitWindow(screenWidth, screenHeight, "Rock Surface");
+
+    Camera3D camera = {0};
+    camera.position = (Vector3){0.01f, 0.0f, 5.0f}; // Camera position
+    camera.target = (Vector3){0.0f, 0.0f, 0.0f};    // Camera looking at point
+    camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
+    camera.fovy = 90.0f;                            // Camera field-of-view Y
+    camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
+    Vector3 targetPosition = {0.0f, 0.0f, -0.5f};
+
+    Texture2D texture = LoadTexture("../resources/space.png");
+    Shader shader = LoadShader(TextFormat("../resources/shaders/glsl330/base.vs"), TextFormat("../resources/shaders/glsl330/base.fs"));
+    Matrix trans = MatrixIdentity();
+    Material material = LoadMaterialDefault();
+
     MkSurf surf;
 
     surf.Init();
@@ -179,30 +199,11 @@ int main(int argc, char **argv)
     std::cout << std::format("scale is {}", scale) << std::endl;
 
     surf.Rescale();
+
     // surf.SetNumIter(numiter);
     // surf.SetAniso(aniso);
     // surf.SetAngle(angle);
     // surf.GenSurf(vnd[nd]);
-
-    // Initialization of raylib
-    //--------------------------------------------------------------------------------------
-    const int screenWidth = 1000;
-    const int screenHeight = 1000;
-
-    InitWindow(screenWidth, screenHeight, "Rock Surface");
-
-    Camera3D camera = {0};
-    camera.position = (Vector3){0.01f, 0.0f, 5.0f}; // Camera position
-    camera.target = (Vector3){0.0f, 0.0f, 0.0f};    // Camera looking at point
-    camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
-    camera.fovy = 90.0f;                            // Camera field-of-view Y
-    camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
-    Vector3 targetPosition = {0.0f, 0.0f, -0.5f};
-
-    Texture2D texture = LoadTexture("../resources/space.png");
-    Shader shader = LoadShader(TextFormat("../resources/shaders/glsl330/base.vs"), TextFormat("../resources/shaders/glsl330/base.fs"));
-    Matrix trans = MatrixIdentity();
-    Material material = LoadMaterialDefault();
 
     MkMesh mkmesh;
     mkmesh.Update(surf);
@@ -220,6 +221,18 @@ int main(int argc, char **argv)
         {
             camera.target = (Vector3){0.0f, 0.0f, 0.0f};
             camera.position = (Vector3){0.01f, 0.0f, 5.0f}; // Camera position
+            camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
+        }
+        if (IsKeyPressed('X'))
+        {
+            camera.target = (Vector3){0.0f, 0.0f, 0.0f};
+            camera.position = (Vector3){5.01f, 0.0f, 0.0f}; // Camera position
+            camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
+        }
+        if (IsKeyPressed('Y'))
+        {
+            camera.target = (Vector3){0.0f, 0.0f, 0.0f};
+            camera.position = (Vector3){0.01f, 5.0f, 0.0f}; // Camera position
             camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
         }
 
@@ -255,7 +268,7 @@ int main(int argc, char **argv)
             ClearBackground(BLACK);
             BeginMode3D(camera);
             {
-                DrawMesh(mesh, material, trans); // ***
+                DrawMesh(mesh, material, trans);
             }
             EndMode3D();
         }

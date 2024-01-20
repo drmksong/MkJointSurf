@@ -8,11 +8,13 @@
 #include <MkPoint.hpp>
 #include "MkSurf.hpp"
 
+// TODO: rename member function and member variable names to be more descriptive
+
 class MkMesh
 {
 private:
     MkSurf surfData;
-    Mesh meshData {0};    
+    Mesh meshData {0};
     void SetupMesh();
     // bool bDone;
 

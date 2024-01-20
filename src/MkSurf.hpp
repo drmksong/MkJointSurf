@@ -9,6 +9,8 @@
 #include "MkGauss.hpp"
 #include "MkNormGen.hpp"
 
+// TODO: rename member function and member variable names to be more descriptive
+
 class MkSurf
 {
 
@@ -38,7 +40,6 @@ public:
     {
         this->scale = scale;
         // TODO: implement Scale()
-
     }
 
     void SetNumIter(int numiter)
@@ -59,15 +60,14 @@ public:
 
     MkDouble &GetSurfData()
     {
-        return this->surfData;
+        return this->surfDouble;
     }
 
     void Bang(double cx, double cy);
     void NegBang(double cx, double cy);
 
     void GenSurf(std::normal_distribution<double> &);
-
-    void Rescale(); // TODO: implement Rescale(), reset the maximum value to scale. It is not much appropriate to use term "rescale" here.
+    void Rescale(); // TODO: run automatically after GenSurf ran
     void Log();
     void Out();
     double &operator()(int i, int j);
@@ -76,22 +76,22 @@ public:
 
     friend std::ofstream &operator<<(std::ofstream &fs, MkSurf &surf)
     {
-        fs << std::to_string(surf.surfData.getSzX()) << " " << std::to_string(surf.surfData.getSzY()) << std::endl;
-        for (int i = 0; i < surf.surfData.getSzX(); i++)
+        fs << std::to_string(surf.surfDouble.getSzX()) << " " << std::to_string(surf.surfDouble.getSzY()) << std::endl;
+        for (int i = 0; i < surf.surfDouble.getSzX(); i++)
         {
-            for (int j = 0; j < surf.surfData.getSzY(); j++)
+            for (int j = 0; j < surf.surfDouble.getSzY(); j++)
             {
-                fs << std::to_string(surf.surfData(i, j)) << ", ";
+                fs << std::to_string(surf.surfDouble(i, j)) << ", ";
             }
             fs << std::endl;
         }
 
-        for (int i = 0; i < surf.surfData.getSzX(); i++)
+        for (int i = 0; i < surf.surfDouble.getSzX(); i++)
         {
             fs << std::to_string(surf.X(i)) << ", " << std::endl;
         }
 
-        for (int j = 0; j < surf.surfData.getSzY(); j++)
+        for (int j = 0; j < surf.surfDouble.getSzY(); j++)
         {
             fs << std::to_string(surf.Y(j)) << ", " << std::endl;
         }
@@ -101,7 +101,7 @@ public:
 
     MkSurf &operator=(MkSurf &surf)
     {
-        this->surfData = surf.surfData;
+        this->surfDouble = surf.surfDouble;
         this->gaussDist = surf.gaussDist;
         this->xMin = surf.xMin;
         this->xMax = surf.xMax;
@@ -117,7 +117,7 @@ public:
 
     MkSurf &operator=(MkSurf &&surf)
     {
-        this->surfData = surf.surfData;
+        this->surfDouble = surf.surfDouble;
         this->gaussDist = surf.gaussDist;
         this->xMin = surf.xMin;
         this->xMax = surf.xMax;
@@ -133,16 +133,16 @@ public:
 
     float X(int i)
     {
-        return (float)i / (float)(surfData.getSzX() - 1) * (xMax - xMin) + xMin;
+        return (float)i / (float)(surfDouble.getSzX() - 1) * (xMax - xMin) + xMin;
     }
 
     float Y(int j)
     {
-        return (float)j / (float)(surfData.getSzY() - 1) * (yMax - yMin) + yMin;
+        return (float)j / (float)(surfDouble.getSzY() - 1) * (yMax - yMin) + yMin;
     }
 
 private:
-    MkDouble surfData;
+    MkDouble surfDouble;
     MkGauss gaussDist;
     float xMin, xMax, yMin, yMax;
     float scale;
@@ -150,4 +150,6 @@ private:
     float Aniso;
     float Angle;
     bool isScaled;
+
+
 };
