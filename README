@@ -70,3 +70,17 @@ To install MkJointSurf, follow these steps:
 ## Usage
 
 To use MkJointSurf in your project, include the necessary header files and link against the library. Here's an example:
+
+## Raylib bugs of screen glitch can be handled by the followings
+
+1. Create '.wslgconfig' with following contents
+
+    [system-distro-env]
+
+    ;disable GPU in system-distro
+
+    LIBGL_ALWAYS_SOFTWARE=1
+
+2. Copy the file to C:\ProgramData\Microsoft\WSL\ as an administrator 
+
+

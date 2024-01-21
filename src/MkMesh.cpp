@@ -68,7 +68,15 @@ void MkMesh::SetupMesh()
 
     std::cout << "setup loc 1" << std::endl;
 
-    float colscale[5][3] = { {0,0,1},{0,1,1},{0,1,0},{1,1,0},{1,0,0} };    
+    MkDouble colScale(5, 3);
+    colScale(0, 0) = 0;    colScale(0, 1) = 0;    colScale(0, 2) = 1;
+    colScale(1, 0) = 0;    colScale(1, 1) = 1;    colScale(1, 2) = 1;
+    colScale(2, 0) = 0;    colScale(2, 1) = 1;    colScale(2, 2) = 0;
+    colScale(3, 0) = 1;    colScale(3, 1) = 1;    colScale(3, 2) = 0;
+    colScale(4, 0) = 1;    colScale(4, 1) = 0;    colScale(4, 2) = 0;
+
+    // float colscale[5][3] = { {0,0,1},{0,1,1},{0,1,0},{1,1,0},{1,0,0} };    
+    // float colscale[5][3] = {{1,0,0},{1,1,0} ,{0,1,0},{0,1,1},{0,0,1} };    
     // for (int i=0;i<5;i++) {
     //     std::cout << std::format(" {},{},{}",colscale[i][0],colscale[i][1],colscale[i][2]) << std::endl;    
     // }
@@ -91,13 +99,23 @@ void MkMesh::SetupMesh()
             meshData.normals[nCounter + 2] = 1.0f;
             nCounter += 3;
 
-            int coloc = (int)((float)(surf_(i, j) - minValue) / (float)(maxValue - minValue)*5.0);
-            float div = (float)((float)(surf_(i, j) - minValue) / (float)(maxValue - minValue)*5.0) - coloc;
-            // std::cout << std::format("color index {}", coloc) << std::endl;
+            int coloc = (int)((float)(surf_(i, j) - minValue) / (float)(maxValue - minValue)*4.0);
+            float div = (float)((float)(surf_(i, j) - minValue) / (float)(maxValue - minValue)*4.0) - coloc;
 
-            meshData.colors[cCounter + 0] = ((colscale[coloc+1][0]-colscale[coloc][0])*div+colscale[coloc][0])*255;
-            meshData.colors[cCounter + 1] = ((colscale[coloc+1][1]-colscale[coloc][1])*div+colscale[coloc][1])*255;
-            meshData.colors[cCounter + 2] = ((colscale[coloc+1][2]-colscale[coloc][2])*div+colscale[coloc][2])*255;
+            if (coloc==4) {
+                std::cout << std::format("color index {}", coloc) << std::endl;
+                meshData.colors[cCounter + 0] = colScale(4,0)*255;
+                meshData.colors[cCounter + 1] = colScale(4,1)*255;
+                meshData.colors[cCounter + 2] = colScale(4,2)*255;
+                meshData.colors[cCounter + 3] = 255;
+
+                cCounter += 4;
+                continue;
+            }
+
+            meshData.colors[cCounter + 0] = ((colScale(coloc+1,0)-colScale(coloc+0,0))*div+colScale(coloc+0,0))*255;
+            meshData.colors[cCounter + 1] = ((colScale(coloc+1,1)-colScale(coloc+0,1))*div+colScale(coloc+0,1))*255;
+            meshData.colors[cCounter + 2] = ((colScale(coloc+1,2)-colScale(coloc+0,2))*div+colScale(coloc+0,2))*255;
             meshData.colors[cCounter + 3] = 255;
 
             // meshData.colors[cCounter + 0] = int((surf_(i, j) - minValue) / (maxValue - minValue) * 255);

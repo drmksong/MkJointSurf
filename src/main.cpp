@@ -4,67 +4,6 @@
 // This is a simple raylib program that draws a hopefully realistic joint surfaces
 // of a rock surface. The program is written in C++ and uses raylib as a library.
 
-// Mesh, vertex data and vao/vbo
-// typedef struct Mesh {
-//     int vertexCount;        // Number of vertices stored in arrays
-//     int triangleCount;      // Number of triangles stored (indexed or not)
-
-//     // Vertex attributes data
-//     float *vertices;        // Vertex position (XYZ - 3 components per vertex) (shader-location = 0)
-//     float *texcoords;       // Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1)
-//     float *texcoords2;      // Vertex texture second coordinates (UV - 2 components per vertex) (shader-location = 5)
-//     float *normals;         // Vertex normals (XYZ - 3 components per vertex) (shader-location = 2)
-//     float *tangents;        // Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4)
-//     unsigned char *colors;      // Vertex colors (RGBA - 4 components per vertex) (shader-location = 3)
-//     unsigned short *indices;    // Vertex indices (in case vertex data comes indexed)
-
-//     // Animation vertex data
-//     float *animVertices;    // Animated vertex positions (after bones transformations)
-//     float *animNormals;     // Animated normals (after bones transformations)
-//     unsigned char *boneIds; // Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning)
-//     float *boneWeights;     // Vertex bone weight, up to 4 bones influence by vertex (skinning)
-
-//     // OpenGL identifiers
-//     unsigned int vaoId;     // OpenGL Vertex Array Object id
-//     unsigned int *vboId;    // OpenGL Vertex Buffer Objects id (default vertex data)
-// } Mesh;
-
-// // Shader
-// typedef struct Shader {
-//     unsigned int id;        // Shader program id
-//     int *locs;              // Shader locations array (RL_MAX_SHADER_LOCATIONS)
-// } Shader;
-
-// // MaterialMap
-// typedef struct MaterialMap {
-//     Texture2D texture;      // Material map texture
-//     Color color;            // Material map color
-//     float value;            // Material map value
-// } MaterialMap;
-
-// // Material, includes shader and maps
-// typedef struct Material {
-//     Shader shader;          // Material shader
-//     MaterialMap *maps;      // Material maps array (MAX_MATERIAL_MAPS)
-//     float params[4];        // Material generic parameters (if required)
-// } Material;
-
-// // Transform, vertex transformation data
-// typedef struct Transform {
-//     Vector3 translation;    // Translation
-//     Quaternion rotation;    // Rotation
-//     Vector3 scale;          // Scale
-// } Transform;
-
-// // Texture, tex data stored in GPU memory (VRAM)
-// typedef struct Texture {
-//     unsigned int id;        // OpenGL texture id
-//     int width;              // Texture base width
-//     int height;             // Texture base height
-//     int mipmaps;            // Mipmap levels, 1 by default
-//     int format;             // Data format (PixelFormat type)
-// } Texture;
-
 int main(int argc, char **argv)
 {
     // double numiter[2] = {10000, 1000}, aniso[2] = {1, 4}, angle[2] = {0.0, 30};
@@ -200,6 +139,9 @@ int main(int argc, char **argv)
 
     surf.Rescale();
 
+    float sum = surf.Analyze();
+    std::cout << std::format("surface (positive - negative) is {:5}", sum) << std::endl;
+
     // surf.SetNumIter(numiter);
     // surf.SetAniso(aniso);
     // surf.SetAngle(angle);
@@ -209,7 +151,7 @@ int main(int argc, char **argv)
     mkmesh.Update(surf);
     Mesh &mesh = mkmesh.GetMesh();
 
-    SetTargetFPS(15); // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -235,7 +177,6 @@ int main(int argc, char **argv)
             camera.position = (Vector3){0.01f, 5.0f, 0.0f}; // Camera position
             camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
         }
-
         if (IsKeyPressed('C'))
         {
             TakeScreenshot(std::format("{}_{:03}.png", fname, batch_num).c_str());
@@ -253,7 +194,7 @@ int main(int argc, char **argv)
                                 (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * 0.1f,
                             (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) * 0.1f - // Move right-left
                                 (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) * 0.1f,
-                            0.0f // Move up-down
+                            (IsKeyDown(KEY_R)) * 0.1f - (IsKeyDown(KEY_F)) * 0.1f // Move up-down
                         },
                         (Vector3){
                             GetMouseDelta().x * 0.05f, // Rotation: yaw
@@ -265,12 +206,20 @@ int main(int argc, char **argv)
         //----------------------------------------------------------------------------------
         BeginDrawing();
         {
-            ClearBackground(BLACK);
+            ClearBackground(RAYWHITE);
+
             BeginMode3D(camera);
             {
                 DrawMesh(mesh, material, trans);
             }
             EndMode3D();
+
+            DrawFPS(10, 10);
+            DrawText(TextFormat("surface (positive - negative) is %.3f", sum), 10, 40, 20, BLUE);
+            DrawText("\'W\': forward, \'S\': backward, \'A\': left, \'D\': right ", 10, 60, 20, BLUE);
+            DrawText("\'Z\': reset camera in z direction, \'X\': reset camera in x-direction, \'Y\': reset camera in y-direction, ", 10, 80, 20, BLUE);
+            DrawText("\'R\': upward, \'F\': downward ", 10, 100, 20, BLUE);
+            DrawText("\'C\': take screenshot, \'V\': save data, ", 10, 120, 20, BLUE);
         }
         EndDrawing();
     }

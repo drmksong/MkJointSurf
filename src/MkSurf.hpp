@@ -72,6 +72,7 @@ public:
     void Out();
     double &operator()(int i, int j);
     double &operator()(float x, float y);
+    float Analyze(); // evaluate the surface if the surface is positive or negative
     void Test();
 
     friend std::ofstream &operator<<(std::ofstream &fs, MkSurf &surf)
@@ -150,6 +151,6 @@ private:
     float Aniso;
     float Angle;
     bool isScaled;
-
+    float sum; // of surfDouble to see if it is positive side or negative side
 
 };

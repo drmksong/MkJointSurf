@@ -182,7 +182,6 @@ void MkSurf::Out() // formatted screen out
         }
         std::cout << std::endl;
     }
-
     return;
 }
 
@@ -208,6 +207,19 @@ double &MkSurf::operator()(float x, float y)
 
     else
         return zero; // out of range, return zero value to invalidate the updating of mesh
+}
+
+float MkSurf::Analyze()
+{
+    this->sum = 0; // reset sum
+    for (int i = 0; i < 100; i++)
+    {
+        for (int j = 0; j < 100; j++)
+        {
+            this->sum += surfDouble(i, j);
+        }
+    }
+    return this->sum;
 }
 
 void MkSurf::Test() // simple random generation test code
