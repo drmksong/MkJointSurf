@@ -41,19 +41,22 @@ void MkSurf::Init()
 void MkSurf::Bang(double cx, double cy)
 {
     isScaled = false;
+    int szX = this->surfDouble.getSzX();
+    int szY = this->surfDouble.getSzY();
     float dev = std::max(this->gaussDist.GetCovar()(0, 0), this->gaussDist.GetCovar()(1, 1));
-    for (int i = 0; i < 100; i++)
-        for (int j = 0; j < 100; j++)
+
+    for (int i = 0; i < szX; i++)
+        for (int j = 0; j < szY; j++)
         {
             // std::cout << std::format("Bang::i = {:3} j = {:3}", i, j) << std::endl;
-            float x = (float)i / 100.0 * (this->xMax - this->xMin) + this->xMin;
-            float y = (float)j / 100.0 * (this->yMax - this->yMin) + this->yMin;
+            float x = (float)i / (float)szX * (this->xMax - this->xMin) + this->xMin;
+            float y = (float)j / (float)szY * (this->yMax - this->yMin) + this->yMin;
 
             // float xt = (x - cx) * cos(this->Angle) - (y - cy) * sin(this->Angle) + cx;
             // float yt = (x - cx) * sin(this->Angle) + (y - cy) * cos(this->Angle) + cy;
 
-            // int ii = (int)((x - this->xMin) / (this->xMax - this->xMin) * 100 + 0.5);
-            // int jj = (int)((y - this->yMin) / (this->yMax - this->yMin) * 100 + 0.5);
+            // int ii = (int)((x - this->xMin) / (this->xMax - this->xMin) * szX + 0.5);
+            // int jj = (int)((y - this->yMin) / (this->yMax - this->yMin) * szY + 0.5);
             // std::cout << std::format("Bang::x{},xt{},y{},yt{},i = {:3}, ii = {}, j = {:3} jj = {}", x, xt, y, yt, i, ii, j, jj) << std::endl;
 
             float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
@@ -70,19 +73,22 @@ void MkSurf::Bang(double cx, double cy)
 void MkSurf::NegBang(double cx, double cy)
 {
     isScaled = false;
+    int szX = this->surfDouble.getSzX();
+    int szY = this->surfDouble.getSzY();
     float dev = std::max(this->gaussDist.GetCovar()(0, 0), this->gaussDist.GetCovar()(1, 1));
-    for (int i = 0; i < 100; i++)
-        for (int j = 0; j < 100; j++)
+
+    for (int i = 0; i < szX; i++)
+        for (int j = 0; j < szY; j++)
         {
             // std::cout << std::format("NegBang::i = {:3} j = {:3}", i, j) << std::endl;
-            float x = (float)i / 100.0 * (this->xMax - this->xMin) + this->xMin;
-            float y = (float)j / 100.0 * (this->yMax - this->yMin) + this->yMin;
+            float x = (float)i / (float)szX * (this->xMax - this->xMin) + this->xMin;
+            float y = (float)j / (float)szY * (this->yMax - this->yMin) + this->yMin;
 
             // float xt = (x - cx) * cos(this->Angle) - (y - cy) * sin(this->Angle) + cx;
             // float yt = (x - cx) * sin(this->Angle) + (y - cy) * cos(this->Angle) + cy;
 
-            // int ii = (int)((x - this->xMin) / (this->xMax - this->xMin) * 100 + 0.5);
-            // int jj = (int)((y - this->yMin) / (this->yMax - this->yMin) * 100 + 0.5);
+            // int ii = (int)((x - this->xMin) / (this->xMax - this->xMin) * szX + 0.5);
+            // int jj = (int)((y - this->yMin) / (this->yMax - this->yMin) * szY + 0.5);
             // std::cout << std::format("NegBang::x{},xt{},y{},yt{},i = {:3}, ii = {}, j = {:3} jj = {}", x, xt, y, yt, i, ii, j, jj) << std::endl;
 
             float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
@@ -98,8 +104,15 @@ void MkSurf::NegBang(double cx, double cy)
 
 void MkSurf::GenSurf(std::normal_distribution<double> &nd)
 {
+    double xmin = xMin - (xMax - xMin) * 0.1;
+    double xmax = xMax + (xMax - xMin) * 0.1;
+    double ymin = yMin - (yMax - yMin) * 0.1;
+    double ymax = yMax + (yMax - yMin) * 0.1;
+
     std::random_device rd;
     std::mt19937 gen(rd());
+    std::uniform_real_distribution nd_bx(xmin, xmax);
+    std::uniform_real_distribution nd_by(ymin, ymax);
     MkDouble stdev(2);
 
     isScaled = false;
@@ -123,9 +136,9 @@ void MkSurf::GenSurf(std::normal_distribution<double> &nd)
         this->gaussDist.SetStdDev(stdev);
 
         if (_nd(_gen) < 0)
-            NegBang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
+            NegBang(std::round(10 * nd_bx(_gen)) / 10.0 , std::round(10 * nd_by(_gen)) / 10.0 );
         else
-            Bang(std::round(10 * _nd_bx(_gen)) / 10.0 - 6, std::round(10 * _nd_by(_gen)) / 10.0 - 6);
+            Bang(std::round(10 * nd_bx(_gen)) / 10.0 , std::round(10 * nd_by(_gen)) / 10.0 );
     }
     std::cout << std::endl;
 }
@@ -134,12 +147,15 @@ void MkSurf::Rescale()
 {
     double maxV = -1e10, minV = 1e10;
     double factor = 1;
+    int szX = this->surfDouble.getSzX();
+    int szY = this->surfDouble.getSzY();
+
     if (isScaled == false)
     {
         isScaled = true;
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < szX; i++)
         {
-            for (int j = 0; j < 100; j++)
+            for (int j = 0; j < szY; j++)
             {
                 maxV = std::max(surfDouble(i, j), maxV);
                 minV = std::min(surfDouble(i, j), minV);
@@ -152,9 +168,9 @@ void MkSurf::Rescale()
         {
             factor = scale / (maxV - minV);
             std::cout << std::format("factor = {:5}", factor) << std::endl;
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < szX; i++)
             {
-                for (int j = 0; j < 100; j++)
+                for (int j = 0; j < szY; j++)
                 {
                     surfDouble(i, j) = surfDouble(i, j) * factor;
                 }
@@ -165,18 +181,24 @@ void MkSurf::Rescale()
 
 void MkSurf::Log()
 {
-    for (int i = 0; i < 100; i++)
-        for (int j = 0; j < 100; j++)
+    int szX = this->surfDouble.getSzX();
+    int szY = this->surfDouble.getSzY();
+
+    for (int i = 0; i < szX; i++)
+        for (int j = 0; j < szY; j++)
             std::cout << this->surfDouble(i, j) << std::endl;
     return;
 }
 
 void MkSurf::Out() // formatted screen out
 {
-    for (int j = 0; j < 100; j++)
+    int szX = this->surfDouble.getSzX();
+    int szY = this->surfDouble.getSzY();
+
+    for (int j = 0; j < szX; j++)
     {
         std::cout << std::setw(3) << j << " ";
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < szY; i++)
         {
             std::cout << std::format("{:4.1}", std::round(10 * this->surfDouble(i, j)) / 10.0);
         }
@@ -193,13 +215,15 @@ double &MkSurf::operator()(int i, int j)
 double &MkSurf::operator()(float x, float y)
 {
     static double zero = 0;
+    int szX = this->surfDouble.getSzX();
+    int szY = this->surfDouble.getSzY();
 
-    int i = (int)((x - this->xMin) / (this->xMax - this->xMin) * 100);
-    int j = (int)((y - this->yMin) / (this->yMax - this->yMin) * 100);
+    int i = (int)((x - this->xMin) / (this->xMax - this->xMin) * szX);
+    int j = (int)((y - this->yMin) / (this->yMax - this->yMin) * szY);
 
     // std::cout << std::format("i = {:3} j = {:3}", i, j) << std::endl;
 
-    if (0 <= i && i < 100 && 0 <= j && j < 100)
+    if (0 <= i && i < szX && 0 <= j && j < szY)
     {
         // std::cout << std::format("inside loop, i = {:3} j = {:3}", i, j) << std::endl;
         return this->surfDouble(i, j);
@@ -211,10 +235,13 @@ double &MkSurf::operator()(float x, float y)
 
 float MkSurf::Analyze()
 {
+    int szX = this->surfDouble.getSzX();
+    int szY = this->surfDouble.getSzY();
+
     this->sum = 0; // reset sum
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < szX; i++)
     {
-        for (int j = 0; j < 100; j++)
+        for (int j = 0; j < szY; j++)
         {
             this->sum += surfDouble(i, j);
         }

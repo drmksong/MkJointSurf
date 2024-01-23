@@ -23,6 +23,13 @@ public:
         this->gaussDist.Init(Mean, StdDev);
     }
 
+    // TODO: check other modules if they use fixed size of surfDouble 100 x 100
+    // always have to query the size of surfDouble before using it
+    void SetGridSize(int xsz, int ysz)
+    {
+        this->surfDouble.Initialize(xsz, ysz);
+    }
+
     void SetGauss(MkDouble &Mean, MkDouble &StdDev)
     {
         this->gaussDist.Init(Mean, StdDev);
@@ -70,6 +77,12 @@ public:
     void Rescale(); // TODO: run automatically after GenSurf ran
     void Log();
     void Out();
+    
+    float GetXMin() { return xMin; }
+    float GetXMax() { return xMax; }
+    float GetYMin() { return yMin; }
+    float GetYMax() { return yMax; }
+
     double &operator()(int i, int j);
     double &operator()(float x, float y);
     float Analyze(); // evaluate the surface if the surface is positive or negative
@@ -152,5 +165,4 @@ private:
     float Angle;
     bool isScaled;
     float sum; // of surfDouble to see if it is positive side or negative side
-
 };

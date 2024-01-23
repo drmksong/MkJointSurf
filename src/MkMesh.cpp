@@ -81,17 +81,22 @@ void MkMesh::SetupMesh()
     //     std::cout << std::format(" {},{},{}",colscale[i][0],colscale[i][1],colscale[i][2]) << std::endl;    
     // }
 
+    float xmin = this->surfData.GetXMin();
+    float xmax = this->surfData.GetXMax();
+    float ymin = this->surfData.GetYMin();
+    float ymax = this->surfData.GetYMax();
+
     for (int j = 0; j < szY; j++)
     {
         for (int i = 0; i < szX; i++)
         {
-            meshData.vertices[vCounter] = (float)(i - 50) / 10.0f;
-            meshData.vertices[vCounter + 1] = (float)(j - 50) / 10.0f;
+            meshData.vertices[vCounter] = (float)(i) / (float)szX * (xmax-xmin) + xmin;
+            meshData.vertices[vCounter + 1] = (float)(j) / (float)szY * (ymax-ymin) + ymin;
             meshData.vertices[vCounter + 2] = (float)surf_(i, j);
             vCounter += 3;
 
-            meshData.texcoords[tcCounter] = (float)i / 100.0f;
-            meshData.texcoords[tcCounter + 1] = (float)j / 100.0f;
+            meshData.texcoords[tcCounter] = (float)i / (float)szX;
+            meshData.texcoords[tcCounter + 1] = (float)j / (float)szY;
             tcCounter += 2;
 
             meshData.normals[nCounter] = 0.0f;
@@ -181,8 +186,10 @@ double &MkMesh::operator()(int i, int j)
 
 void MkMesh::Log()
 {
-    for (int i = 0; i < 100; i++)
-        for (int j = 0; j < 100; j++)
+    int szX = surfData.GetSurfData().getSzX();
+    int szY = surfData.GetSurfData().getSzY();
+    for (int i = 0; i < szX; i++)
+        for (int j = 0; j < szY; j++)
             std::cout << this->surfData(i, j) << std::endl;
     return;
 }

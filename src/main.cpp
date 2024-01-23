@@ -118,7 +118,8 @@ int main(int argc, char **argv)
     MkSurf surf;
 
     surf.Init();
-    surf.SetRange(-5.0, 5.0, -5.0, 5.0);
+    surf.SetRange(-10.0, 10.0, -10.0, 10.0);
+    surf.SetGridSize(200,200);
     // surf.SetNumIter(5000);
     // surf.SetAniso(1);
     // surf.GenSurf(_nd3);
