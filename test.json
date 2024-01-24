@@ -1,6 +1,5 @@
 {
-    "data":
-    [
+    "data": [
         {
             "NumIter": 5000,
             "Aniso": 1,
@@ -13,7 +12,6 @@
             "ND": 4,
             "Angle": 90
         },
-
         {
             "NumIter": 2000,
             "Aniso": 1,
@@ -23,5 +21,9 @@
     ],
     "Scale": 3.0,
     "Image": "rock",
-    "Batch": 1
+    "Batch": 1,
+    "SizeX": 2,
+    "SizeY": 2,
+    "GridX": 200,
+    "GridY": 200
 }

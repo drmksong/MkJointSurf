@@ -73,6 +73,7 @@ int main(int argc, char **argv)
             size_y = sizey.asFloat();
             grid_x = gridx.asInt();
             grid_y = gridy.asInt();
+            
             // std::cout << std::format("root[NumIter] is {}", root["NumIter"].asDouble()) << std::endl;
             // std::cout << std::format("root[Aniso] is {}", root["Aniso"].asDouble()) << std::endl;
             // std::cout << std::format("root[ND] is {}", root["ND"].asInt()) << std::endl;
@@ -132,6 +133,7 @@ int main(int argc, char **argv)
     surf.SetRange(-size_x / 2.0, size_x / 2.0, -size_y / 2.0, size_y / 2.0);
     surf.SetGridSize(grid_x, grid_y);
 
+    // test code with fixed parameters, to be deleted...
     // surf.SetRange(-10.0, 10.0, -10.0, 10.0);
     // surf.SetGridSize(200,200);
     // surf.SetNumIter(5000);
@@ -159,96 +161,96 @@ int main(int argc, char **argv)
     evalJRC.SetSurfData(surf);
     evalJRC.cal_theta_s();
 
-    // float sum = surf.Analyze();
-    // std::cout << std::format("surface (positive - negative) is {:5}", sum) << std::endl;
+    float sum = surf.Analyze();
+    std::cout << std::format("surface (positive - negative) is {:5}", sum) << std::endl;
 
-    // // surf.SetNumIter(numiter);
-    // // surf.SetAniso(aniso);
-    // // surf.SetAngle(angle);
-    // // surf.GenSurf(vnd[nd]);
+    // surf.SetNumIter(numiter);
+    // surf.SetAniso(aniso);
+    // surf.SetAngle(angle);
+    // surf.GenSurf(vnd[nd]);
 
-    // MkMesh mkmesh;
-    // mkmesh.Update(surf);
-    // Mesh &mesh = mkmesh.GetMesh();
+    MkMesh mkmesh;
+    mkmesh.Update(surf);
+    Mesh &mesh = mkmesh.GetMesh();
 
-    // SetTargetFPS(60); // Set our game to run at 60 frames-per-second
-    // //--------------------------------------------------------------------------------------
+    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
+    //--------------------------------------------------------------------------------------
 
-    // // Main game loop
-    // while (!WindowShouldClose())
-    // { // Detect window close button or ESC key
-    //   // Update
-    //     UpdateCamera(&camera, CAMERA_FREE);
-    //     if (IsKeyPressed('Z'))
-    //     {
-    //         camera.target = (Vector3){0.0f, 0.0f, 0.0f};
-    //         camera.position = (Vector3){0.01f, 0.0f, 5.0f}; // Camera position
-    //         camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
-    //     }
-    //     if (IsKeyPressed('X'))
-    //     {
-    //         camera.target = (Vector3){0.0f, 0.0f, 0.0f};
-    //         camera.position = (Vector3){5.01f, 0.0f, 0.0f}; // Camera position
-    //         camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
-    //     }
-    //     if (IsKeyPressed('Y'))
-    //     {
-    //         camera.target = (Vector3){0.0f, 0.0f, 0.0f};
-    //         camera.position = (Vector3){0.01f, 5.0f, 0.0f}; // Camera position
-    //         camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
-    //     }
-    //     if (IsKeyPressed('C'))
-    //     {
-    //         TakeScreenshot(std::format("{}_{:03}.png", fname, batch_num).c_str());
-    //     }
-    //     if (IsKeyPressed('V'))
-    //     {
-    //         std::ofstream fout(std::format("{}_{:03}.dat", fname, batch_num));
-    //         fout << surf;
-    //         fout.close();
-    //     }
+    // Main game loop
+    while (!WindowShouldClose())
+    { // Detect window close button or ESC key
+      // Update
+        UpdateCamera(&camera, CAMERA_FREE);
+        if (IsKeyPressed('Z'))
+        {
+            camera.target = (Vector3){0.0f, 0.0f, 0.0f};
+            camera.position = (Vector3){0.01f, 0.0f, 5.0f}; // Camera position
+            camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
+        }
+        if (IsKeyPressed('X'))
+        {
+            camera.target = (Vector3){0.0f, 0.0f, 0.0f};
+            camera.position = (Vector3){5.01f, 0.0f, 0.0f}; // Camera position
+            camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
+        }
+        if (IsKeyPressed('Y'))
+        {
+            camera.target = (Vector3){0.0f, 0.0f, 0.0f};
+            camera.position = (Vector3){0.01f, 5.0f, 0.0f}; // Camera position
+            camera.up = (Vector3){0.0f, 0.0f, 1.0f};        // Camera up vector (rotation towards target)
+        }
+        if (IsKeyPressed('C'))
+        {
+            TakeScreenshot(std::format("{}_{:03}.png", fname, batch_num).c_str());
+        }
+        if (IsKeyPressed('V'))
+        {
+            std::ofstream fout(std::format("{}_{:03}.dat", fname, batch_num));
+            fout << surf;
+            fout.close();
+        }
 
-    //     UpdateCameraPro(&camera,
-    //                     (Vector3){
-    //                         (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) * 0.1f - // Move forward-backward
-    //                             (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * 0.1f,
-    //                         (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) * 0.1f - // Move right-left
-    //                             (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) * 0.1f,
-    //                         (IsKeyDown(KEY_R)) * 0.1f - (IsKeyDown(KEY_F)) * 0.1f // Move up-down
-    //                     },
-    //                     (Vector3){
-    //                         GetMouseDelta().x * 0.05f, // Rotation: yaw
-    //                         GetMouseDelta().y * 0.05f, // Rotation: pitch
-    //                         0.0f                       // Rotation: roll
-    //                     },
-    //                     GetMouseWheelMove() * 2.0f);
+        UpdateCameraPro(&camera,
+                        (Vector3){
+                            (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) * 0.1f - // Move forward-backward
+                                (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * 0.1f,
+                            (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) * 0.1f - // Move right-left
+                                (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) * 0.1f,
+                            (IsKeyDown(KEY_R)) * 0.1f - (IsKeyDown(KEY_F)) * 0.1f // Move up-down
+                        },
+                        (Vector3){
+                            GetMouseDelta().x * 0.05f, // Rotation: yaw
+                            GetMouseDelta().y * 0.05f, // Rotation: pitch
+                            0.0f                       // Rotation: roll
+                        },
+                        GetMouseWheelMove() * 2.0f);
 
-    //     //----------------------------------------------------------------------------------
-    //     BeginDrawing();
-    //     {
-    //         ClearBackground(RAYWHITE);
+        //----------------------------------------------------------------------------------
+        BeginDrawing();
+        {
+            ClearBackground(RAYWHITE);
 
-    //         BeginMode3D(camera);
-    //         {
-    //             DrawMesh(mesh, material, trans);
-    //         }
-    //         EndMode3D();
+            BeginMode3D(camera);
+            {
+                DrawMesh(mesh, material, trans);
+            }
+            EndMode3D();
 
-    //         DrawFPS(10, 10);
-    //         DrawText(TextFormat("surface (positive - negative) is %.3f", sum), 10, 40, 20, BLUE);
-    //         DrawText("\'W\': forward, \'S\': backward, \'A\': left, \'D\': right ", 10, 60, 20, BLUE);
-    //         DrawText("\'Z\': reset camera in z direction, \'X\': reset camera in x-direction, \'Y\': reset camera in y-direction, ", 10, 80, 20, BLUE);
-    //         DrawText("\'R\': upward, \'F\': downward ", 10, 100, 20, BLUE);
-    //         DrawText("\'C\': take screenshot, \'V\': save data, ", 10, 120, 20, BLUE);
-    //     }
-    //     EndDrawing();
-    // }
+            DrawFPS(10, 10);
+            DrawText(TextFormat("surface (positive - negative) is %.3f", sum), 10, 40, 20, BLUE);
+            DrawText("\'W\': forward, \'S\': backward, \'A\': left, \'D\': right ", 10, 60, 20, BLUE);
+            DrawText("\'Z\': reset camera in z direction, \'X\': reset camera in x-direction, \'Y\': reset camera in y-direction, ", 10, 80, 20, BLUE);
+            DrawText("\'R\': upward, \'F\': downward ", 10, 100, 20, BLUE);
+            DrawText("\'C\': take screenshot, \'V\': save data, ", 10, 120, 20, BLUE);
+        }
+        EndDrawing();
+    }
 
-    // //----------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------
 
-    // // De-Initialization
-    // //--------------------------------------------------------------------------------------
+    // De-Initialization
+    //--------------------------------------------------------------------------------------
     CloseWindow(); // Close window and OpenGL context
-    // //--------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------
     return 0;
 }
