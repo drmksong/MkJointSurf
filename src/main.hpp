@@ -14,6 +14,7 @@
 #include "MkSurf.hpp"
 #include "MkGauss.hpp"
 #include "MkNormGen.hpp"
+#include "MkEvalJRC.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #define GLSL_VERSION 330

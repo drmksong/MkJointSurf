@@ -11,7 +11,48 @@ MkEvalJRC::~MkEvalJRC()
 double MkEvalJRC::cal_theta_s()
 {
     assert(surfData.GetSurfData().getSzX() > 0 && surfData.GetSurfData().getSzY() > 0);
-    
+
+    int szX = surfData.GetSurfData().getSzX();
+    int szY = surfData.GetSurfData().getSzY();
+
+    float xmin = surfData.GetXMin();
+    float xmax = surfData.GetXMax();
+    float ymin = surfData.GetYMin();
+    float ymax = surfData.GetYMax();
+
+    for (int i = 0; i < szX - 1; i++)
+    {
+        for (int j = 0; j < szY - 1; j++)
+        {
+            MkPoint p1, p2, p3, p4;
+            int ii = i + 1, jj = j + 1;
+
+            p1.X = (float)(i) / (float)szX * (xmax - xmin) + xmin;
+            p1.Y = (float)(j) / (float)szY * (ymax - ymin) + ymin;
+            p1.Z = surfData.GetSurfData()(i, j);
+
+            p2.X = (float)(ii) / (float)szX * (xmax - xmin) + xmin;
+            p2.Y = (float)(j) / (float)szY * (ymax - ymin) + ymin;
+            p2.Z = surfData.GetSurfData()(ii, j);
+
+            p3.X = (float)(i) / (float)szX * (xmax - xmin) + xmin;
+            p3.Y = (float)(jj) / (float)szY * (ymax - ymin) + ymin;
+            p3.Z = surfData.GetSurfData()(i, jj);
+
+            p4.X = (float)(ii) / (float)szX * (xmax - xmin) + xmin;
+            p4.Y = (float)(jj) / (float)szY * (ymax - ymin) + ymin;
+            p4.Z = surfData.GetSurfData()(ii, jj);
+
+            // TODO: peculiar bug here that the order of points result in different normal vector -> check MkTriangle::CalNormal()
+            MkTriangle t1(p3, p1, p2), t2(p2, p4, p3);
+
+            MkVector<double> v1, v2;
+            v1 = t1.GetNormal();
+            v2 = t2.GetNormal();
+            std::cout << std::format("t1 dip : {:5.2f}, t2 dip : {:5.2f}", std::acos(v1[2]) * 180 / 3.14159, std::acos(v2[2]) * 180 / 3.14159) << std::endl;
+        }
+    }
+
     return this->theta_s;
 }
 

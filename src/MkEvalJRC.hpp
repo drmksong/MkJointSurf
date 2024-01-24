@@ -14,6 +14,9 @@
 // Zrange: range of height (i.e., Zmax - Zmin)
 
 #include "MkSurf.hpp"
+#include <MkPoint.hpp>
+#include <MkTriangle.hpp>
+#include <MkMatrix.hpp>
 
 class MkEvalJRC
 {
