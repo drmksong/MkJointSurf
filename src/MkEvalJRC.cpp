@@ -158,12 +158,14 @@ double MkEvalJRC::cal_S_sT()
 
             // TODO: peculiar bug here that the order of points result in different normal vector -> check MkTriangle::CalNormal()
             MkTriangle t1(p1, p2, p3), t2(p2, p4, p3);
-
-            sum += t1.GetArea3D() + t2.GetArea3D();
+            assert(t1.GetArea2D() > 0.001);
+            assert(t2.GetArea2D() > 0.001);
+            sum += t1.GetArea3D() / t1.GetArea2D() + t2.GetArea3D() / t1.GetArea2D();
         }
     }
-    this->S_sT = sum/((xmax-xmin)*(ymax-ymin)); // TODO: this is based on the assumption that the surface is a rectangle, which may not be always true...
-    std::cout << std::format("S_sT : {:5.2f}", this->S_sT) << std::endl;
+    // this->S_sT = sum / ((xmax - xmin) * (ymax - ymin)); // TODO: this is based on the assumption that the surface is a rectangle, which may not be always true...
+    this->S_sT = sum; // TODO: this is based on the assumption that the surface is a rectangle, which may not be always true...
+    std::cout << std::format("S_sT : {:6.4f}", this->S_sT) << std::endl;
 
     return this->S_sT;
 }

@@ -164,35 +164,35 @@ int main(int argc, char **argv)
     evalJRC.cal_S_sT();
 
     // TODO: Checking for the area of a triangle is completed and the code below is to be deleted...soon
-    // MkPoint p1, p2, p3;
-    // p1.X = 0.0;
-    // p1.Y = 0.0;
-    // p1.Z = 0.0;
-    // p2.X = 1.0;
-    // p2.Y = 0.0;
-    // p2.Z = 1.0;
-    // p3.X = 0.0;
-    // p3.Y = 1.0;
-    // p3.Z = 1.0;
-    // MkTriangle t1(p1, p2, p3);
+    MkPoint p1, p2, p3;
+    p1.X = 0.0;
+    p1.Y = 0.0;
+    p1.Z = 0.0;
+    p2.X = 1.0;
+    p2.Y = 0.0;
+    p2.Z = 1.0;
+    p3.X = 0.0;
+    p3.Y = 1.0;
+    p3.Z = 1.0;
+    MkTriangle t1(p1, p2, p3);
 
-    // MkVector<double> v1, v2, u;
-    // MkLine l1, l2;
+    MkVector<double> v1, v2, u;
+    MkLine l1, l2;
 
-    // l1.SetLine(t1[0], t1[1]);
-    // l2.SetLine(t1[0], t1[2]);
+    l1.SetLine(t1[0], t1[1]);
+    l2.SetLine(t1[0], t1[2]);
 
-    // v1 = l1.GetVector() * l1.GetLength();
-    // v2 = l2.GetVector() * l2.GetLength();
+    v1 = l1.GetVector() * l1.GetLength();
+    v2 = l2.GetVector() * l2.GetLength();
 
-    // v1.Cross(v2, u); // u = v1 x v2
-    // double len = std::sqrt(u[0]*u[0] + u[1]*u[1] + u[2]*u[2]);
-    // std::cout << std::format("v1 is ({} {} {}), v2 is ({} {} {}), u is ({} {} {}), |u| is {} or {}", v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], u[0], u[1], u[2], u.GetLength(), len) << std::endl;
+    v1.Cross(v2, u); // u = v1 x v2
+    double len = std::sqrt(u[0]*u[0] + u[1]*u[1] + u[2]*u[2]);
+    std::cout << std::format("v1 is ({} {} {}), v2 is ({} {} {}), u is ({} {} {}), |u| is {} or {}", v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], u[0], u[1], u[2], u.GetLength(), len) << std::endl;
 
-    // double FArea3D = u.GetLength() / 2;
-    // std::cout << std::endl;
-    // std::cout << std::format("t1.GetArea() is {}, t1.GetArea3D() is {}", t1.GetArea2D(), t1.GetArea3D()) << std::endl
-    //           << std::endl; // TODO: this is not correct, check MkTriangle::CalArea(), very very important
+    double FArea3D = u.GetLength() / 2;
+    std::cout << std::endl;
+    std::cout << std::format("t1.GetArea() is {}, t1.GetArea3D() is {}", t1.GetArea2D(), t1.GetArea3D()) << std::endl
+              << std::endl; // TODO: this is not correct, check MkTriangle::CalArea(), very very important
 
     float sum = surf.Analyze();
     std::cout << std::format("surface (positive - negative) is {:5}", sum) << std::endl;
