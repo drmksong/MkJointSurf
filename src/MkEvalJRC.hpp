@@ -13,6 +13,7 @@
 // Zrms: root mean square height
 // Zrange: range of height (i.e., Zmax - Zmin)
 
+#include <cmath>
 #include "MkSurf.hpp"
 #include <MkPoint.hpp>
 #include <MkTriangle.hpp>

@@ -59,9 +59,9 @@ void MkSurf::Bang(double cx, double cy)
             // int jj = (int)((y - this->yMin) / (this->yMax - this->yMin) * szY + 0.5);
             // std::cout << std::format("Bang::x{},xt{},y{},yt{},i = {:3}, ii = {}, j = {:3} jj = {}", x, xt, y, yt, i, ii, j, jj) << std::endl;
 
-            float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
-            if (dis > 3 * dev)
-                continue;
+            // float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
+            // if (dis > 4 * dev)
+            //     continue;
             double z = this->gaussDist.ScaledEval(x - cx, y - cy);
             // std::cout << std::format("Bang::xt = {:3} yt = {:3} z = {:3}", xt, yt, z) << std::endl;
             this->surfDouble(i, j) += z;
@@ -91,9 +91,9 @@ void MkSurf::NegBang(double cx, double cy)
             // int jj = (int)((y - this->yMin) / (this->yMax - this->yMin) * szY + 0.5);
             // std::cout << std::format("NegBang::x{},xt{},y{},yt{},i = {:3}, ii = {}, j = {:3} jj = {}", x, xt, y, yt, i, ii, j, jj) << std::endl;
 
-            float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
-            if (dis > 3 * dev)
-                continue;
+            // float dis = std::sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
+            // if (dis > 4 * dev)
+            //     continue;
             double z = this->gaussDist.ScaledEval(x - cx, y - cy);
             this->surfDouble(i, j) -= z;
             // std::cout << std::format("NegBang::xt = {:3} yt = {:3} z = {:3}", xt, yt, z) << std::endl;
