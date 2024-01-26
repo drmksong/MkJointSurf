@@ -17,6 +17,7 @@
 #include "MkSurf.hpp"
 #include <MkPoint.hpp>
 #include <MkTriangle.hpp>
+#include <MkPlane.hpp>
 #include <MkMatrix.hpp>
 
 class MkEvalJRC
@@ -50,4 +51,7 @@ private:
     double Zsa;
     double Zrms;
     double Zrange;
+    MkPlane RMSplane;
+    
+    void findRMSplane();
 };
