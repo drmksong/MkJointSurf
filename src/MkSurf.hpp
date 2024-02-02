@@ -16,6 +16,21 @@ class MkSurf
 
 public:
     MkSurf();
+    MkSurf(const MkSurf &surf)
+    {
+        this->surfDouble = surf.surfDouble;
+        this->gaussDist = surf.gaussDist;
+        this->xMin = surf.xMin;
+        this->xMax = surf.xMax;
+        this->yMin = surf.yMin;
+        this->yMax = surf.yMax;
+        this->scale = surf.scale;
+        this->NumIter = surf.NumIter;
+        this->Aniso = surf.Aniso;
+        this->Angle = surf.Angle;
+        this->isScaled = surf.isScaled;
+    }
+
     ~MkSurf();
     void Init();
     void Init(MkDouble &Mean, MkDouble &StdDev)
@@ -142,6 +157,18 @@ public:
         this->Aniso = surf.Aniso;
         this->Angle = surf.Angle;
         this->isScaled = surf.isScaled;
+        return *this;
+    }
+
+    MkSurf &operator+=(MkSurf &surf)
+    {
+        for (int i = 0; i < surf.surfDouble.getSzX(); i++)
+        {
+            for (int j = 0; j < surf.surfDouble.getSzY(); j++)
+            {
+                this->surfDouble(i, j) += surf.surfDouble(i, j);
+            }
+        }
         return *this;
     }
 

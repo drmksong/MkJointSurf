@@ -5,6 +5,15 @@ MkGauss::MkGauss()
     Init();
 }
 
+MkGauss::MkGauss(const MkGauss &gauss)
+{
+    angle = gauss.angle;
+    mean = gauss.mean;
+    stdev = gauss.stdev;
+    coVar = gauss.coVar;
+    maxVal = gauss.maxVal;
+}
+
 MkGauss::~MkGauss()
 {
 }
@@ -98,7 +107,7 @@ double MkGauss::Eval(MkDouble &xy)
 
     double expo = 0, res = 0;
     // -(a(x-x0)^2 + 2b(x-x0)(y-y0) + c(y-y0)^2)
-    expo = -(coVar(0,0)*std::pow(xy(0)-mean(0),2)+2*coVar(0,1)*(xy(0)-mean(0))*(xy(1)-mean(1))+coVar(1,1)*std::pow(xy(1)-mean(1),2));
+    expo = -(coVar(0, 0) * std::pow(xy(0) - mean(0), 2) + 2 * coVar(0, 1) * (xy(0) - mean(0)) * (xy(1) - mean(1)) + coVar(1, 1) * std::pow(xy(1) - mean(1), 2));
     res = std::exp(expo);
 
     return res;
@@ -156,6 +165,19 @@ double MkGauss::Eval(MkDouble &xy)
 
 //     return res;
 // }
+
+MkGauss &MkGauss::operator=(const MkGauss &gauss)
+{
+    // TODO: insert return statement here
+
+    angle = gauss.angle;
+    mean = gauss.mean;
+    stdev = gauss.stdev;
+    coVar = gauss.coVar;
+    maxVal = gauss.maxVal;
+
+    return *this;
+}
 
 void MkGauss::Test()
 {

@@ -136,9 +136,9 @@ void MkSurf::GenSurf(std::normal_distribution<double> &nd)
         this->gaussDist.SetStdDev(stdev);
 
         if (_nd(_gen) < 0)
-            NegBang(std::round(10 * nd_bx(_gen)) / 10.0 , std::round(10 * nd_by(_gen)) / 10.0 );
+            NegBang(std::round(10 * nd_bx(_gen)) / 10.0, std::round(10 * nd_by(_gen)) / 10.0);
         else
-            Bang(std::round(10 * nd_bx(_gen)) / 10.0 , std::round(10 * nd_by(_gen)) / 10.0 );
+            Bang(std::round(10 * nd_bx(_gen)) / 10.0, std::round(10 * nd_by(_gen)) / 10.0);
     }
     std::cout << std::endl;
 }
@@ -246,6 +246,9 @@ float MkSurf::Analyze()
             this->sum += surfDouble(i, j);
         }
     }
+
+    this->sum /= (szX * szY);
+    std::cout << std::format("This surf is {}, {:5}", sum >= 0 ? "positive" : "negative", this->sum) << std::endl;
     return this->sum;
 }
 

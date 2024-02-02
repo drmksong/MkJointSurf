@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 {
     // double numiter[2] = {10000, 1000}, aniso[2] = {1, 4}, angle[2] = {0.0, 30};
     // int nd[2] = {1, 8};
-    std::vector<double> numiter, aniso, angle;
+    std::vector<double> numiter, aniso, angle, scale;
     std::vector<int> nd;
     std::vector<std::normal_distribution<double>> vnd;
     vnd.push_back(_nd);
@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     vnd.push_back(_nd9);
     std::string fname = "";
     int batch_num = 0;
-    float scale = 1;
+
     float size_x = 10.0, size_y = 10.0;
     int grid_x = 100, grid_y = 100;
 
@@ -57,6 +57,7 @@ int main(int argc, char **argv)
                 aniso.push_back(data[i]["Aniso"].asDouble());
                 nd.push_back(data[i]["ND"].asInt());
                 angle.push_back(-data[i]["Angle"].asDouble());
+                scale.push_back(data[i]["Scale"].asDouble());
             }
             const Json::Value &scale_ = root["Scale"];
             const Json::Value &imag = root["Image"];
@@ -66,7 +67,6 @@ int main(int argc, char **argv)
             const Json::Value &gridx = root["GridX"]; // number of  x grid points
             const Json::Value &gridy = root["GridY"]; // number of  y grid points
 
-            scale = scale_.asFloat();
             fname = imag.asString();
             batch_num = batch.asInt();
             size_x = sizex.asFloat();
@@ -133,6 +133,23 @@ int main(int argc, char **argv)
     surf.SetRange(-size_x / 2.0, size_x / 2.0, -size_y / 2.0, size_y / 2.0);
     surf.SetGridSize(grid_x, grid_y);
 
+    std::vector<MkSurf> surfs;
+    // surfs.reserve(numiter.size());
+
+    for (int i = 0; i < numiter.size(); i++)
+    {
+        MkSurf s;
+        surfs.emplace_back(s);
+    }
+
+    for (int i = 0; i < numiter.size(); i++)
+    {
+
+        surfs[i].Init();
+        surfs[i].SetRange(-size_x / 2.0, size_x / 2.0, -size_y / 2.0, size_y / 2.0);
+        surfs[i].SetGridSize(grid_x, grid_y);
+    }
+
     // test code with fixed parameters, to be deleted...
     // surf.SetRange(-10.0, 10.0, -10.0, 10.0);
     // surf.SetGridSize(200,200);
@@ -146,20 +163,22 @@ int main(int argc, char **argv)
         std::cout << std::format("aniso[{}] is {} ", i, aniso[i]) << std::endl;
         std::cout << std::format("nd[{}] is {} ", i, nd[i]) << std::endl;
         std::cout << std::format("angle[{}] is {} ", i, -angle[i]) << std::endl;
+        std::cout << std::format("scale[{}] is {} ", i, scale[i]) << std::endl;
 
-        surf.SetNumIter(numiter[i]);
-        surf.SetAniso(aniso[i]);
-        surf.SetAngle(angle[i]);
-        surf.GenSurf(vnd[nd[i]]);
+        surfs[i].SetNumIter(numiter[i]);
+        surfs[i].SetAniso(aniso[i]);
+        surfs[i].SetAngle(angle[i]);
+        surfs[i].GenSurf(vnd[nd[i]]);
+        surfs[i].SetScale(scale[i]);
+        surfs[i].Rescale();
+        surf += surfs[i];
     }
-    surf.SetScale(scale);
-    std::cout << std::format("scale is {}", scale) << std::endl;
 
-    surf.Rescale();
-
+    // TODO: merge surfs to surf --> Done!!!
     MkEvalJRC evalJRC;
     evalJRC.SetSurfData(surf);
-    
+    // evalJRC.SetSurfData(surf);
+
     evalJRC.cal_theta_s();
     evalJRC.cal_theta_2s();
     evalJRC.cal_S_sT();
@@ -199,16 +218,18 @@ int main(int argc, char **argv)
     //           << std::endl; // TODO: this is not correct, check MkTriangle::CalArea(), very very important
 
     float sum = surf.Analyze();
-    std::cout << std::format("surface (positive - negative) is {:5}", sum) << std::endl;
+    // std::cout << std::format("surface (positive - negative) is {:5}", sum) << std::endl;
 
-    // surf.SetNumIter(numiter);
-    // surf.SetAniso(aniso);
-    // surf.SetAngle(angle);
-    // surf.GenSurf(vnd[nd]);
-
-    MkMesh mkmesh;
+    int whichmesh = 0;
+    MkMesh mkmesh1, mkmesh2, mkmesh3, mkmesh;
     mkmesh.Update(surf);
     Mesh &mesh = mkmesh.GetMesh();
+    mkmesh1.Update(surfs[0]);
+    Mesh &mesh1 = mkmesh1.GetMesh();
+    mkmesh2.Update(surfs[1]);
+    Mesh &mesh2 = mkmesh2.GetMesh();
+    mkmesh3.Update(surfs[2]);
+    Mesh &mesh3 = mkmesh3.GetMesh();
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -246,6 +267,22 @@ int main(int argc, char **argv)
             fout << surf;
             fout.close();
         }
+        if (IsKeyPressed('0'))
+        {
+            whichmesh = 0;
+        }
+        if (IsKeyPressed('1'))
+        {
+            whichmesh = 1;
+        }
+        if (IsKeyPressed('2'))
+        {
+            whichmesh = 2;
+        }
+        if (IsKeyPressed('3'))
+        {
+            whichmesh = 3;
+        }
 
         UpdateCameraPro(&camera,
                         (Vector3){
@@ -269,7 +306,22 @@ int main(int argc, char **argv)
 
             BeginMode3D(camera);
             {
-                DrawMesh(mesh, material, trans);
+                if (whichmesh == 0)
+                {
+                    DrawMesh(mesh, material, trans);
+                }
+                else if (whichmesh == 1)
+                {
+                    DrawMesh(mesh1, material, trans);
+                }
+                else if (whichmesh == 2)
+                {
+                    DrawMesh(mesh2, material, trans);
+                }
+                else if (whichmesh == 3)
+                {
+                    DrawMesh(mesh3, material, trans);
+                }
             }
             EndMode3D();
 

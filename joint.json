@@ -1,0 +1,19 @@
+{
+    "data":
+    [
+        {
+            "NumIter": 2000,
+            "Aniso": 3,
+            "ND": 4,
+            "Angle": 30,
+            "Scale": 3.0            
+        }
+
+    ],
+    "Image": "rock",
+    "Batch": 1,
+    "SizeX": 5.0,
+    "SizeY": 5.0,
+    "GridX": 200,
+    "GridY": 200
+}

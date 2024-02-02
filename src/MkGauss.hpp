@@ -10,6 +10,7 @@ class MkGauss
 {
 public:
     MkGauss();
+    MkGauss(const MkGauss &gauss);
     ~MkGauss();
     void Init();
     void Init(MkDouble &Mean, MkDouble &StdDev);
@@ -30,6 +31,8 @@ public:
     MkDouble &GetMean() { return mean; };
     MkDouble &GetStdDev() { return stdev; };
     MkMatrix<double> &GetCovar() { return coVar; };
+    MkGauss &operator=(const MkGauss &gauss);
+
 
     void Test();
 

@@ -25,6 +25,8 @@ void MkMesh::SetupMesh()
         return;
     }
 
+    assert(this->surfData.GetSurfData().getSzX() > 0 && this->surfData.GetSurfData().getSzY() > 0);
+
     MkSurf &surf_ = this->surfData;
 
     int szX = surf_.GetSurfData().getSzX();
